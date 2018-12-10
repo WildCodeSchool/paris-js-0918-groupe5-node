@@ -21,7 +21,7 @@ router.get('/', (req,res) => {
 
 router.post('/', (req,res) => {
 	const data = req.body;
-	console.log("coucoucouc");
+	console.log("Ajout d'un contact");
 	const newContact = new models.contact(data);
 	newContact.save()
 		.then(newContact => {
@@ -30,7 +30,7 @@ router.post('/', (req,res) => {
         })
         .catch(err => {
            console.log(err.message);
-        });
+        }); //ERREUR A REVOIR
 });
 
 // router.put('/:id(\\d+)', (req,res) => {
