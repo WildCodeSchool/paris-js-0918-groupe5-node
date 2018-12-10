@@ -25,7 +25,8 @@ router.post('/', (req,res) => {
 	const newContact = new models.contact(data);
 	newContact.save()
 		.then(newContact => {
-			res.status(200).send(`Contact créé à l'id : ${newContact.id}`)
+			// when we received a newContact, we send back a JSON to the client
+			res.status(200).json(newContact)
         })
         .catch(err => {
            console.log(err.message);
