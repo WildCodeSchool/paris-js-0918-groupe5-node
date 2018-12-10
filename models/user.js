@@ -1,24 +1,25 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const user = sequelize.define('user', {
-    title: DataTypes.STRING,
-    lastName: DataTypes.STRING,
-    firstName: DataTypes.STRING,
-    address: DataTypes.STRING,
-    phone: DataTypes.INTEGER,
+    title: {type: DataTypes.STRING, allowNull : false},
+    lastName: {type: DataTypes.STRING, allowNull : false},
+    firstName: {type: DataTypes.STRING, allowNull : false},
+    address: {type: DataTypes.STRING, allowNull : false},
+    phone: {type : DataTypes.INTEGER, allowNull : false},
     dateOfBirth: DataTypes.DATE,
-    receiverBond: DataTypes.STRING,
-    email: DataTypes.STRING,
-    password: DataTypes.STRING,
-    preferenceOfContact: DataTypes.INTEGER,
-    numberOfSubscriptions: DataTypes.INTEGER,
-    subscriber: DataTypes.BOOLEAN,
-    status: DataTypes.BOOLEAN
+    receiverBond: DataTypes.STRING, // false pour caregiver
+    email: DataTypes.STRING, // false pour caregiver
+    password: DataTypes.STRING, // false pour caregiver
+    preferenceOfContact: DataTypes.INTEGER, // false pour caregiver
+    numberOfSubscriptions: DataTypes.INTEGER, // false pour caregiver
+    subscriber: { type: DataTypes.BOOLEAN, allowNull : false},
+    status: { type : DataTypes.BOOLEAN, allowNull : false }
   }, {});
   user.associate = function(models) {
     // associations can be defined here
     user.belongsToMany(models.contact, {
       through: "user_contact",
+      
       as: "caregiver",
       foreignKey: "caregiverId"
     }, models.event, {
