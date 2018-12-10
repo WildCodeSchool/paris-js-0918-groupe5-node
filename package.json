@@ -17,5 +17,10 @@
     "pg": "^7.7.1",
     "sequelize": "^4.41.2",
     "sqlite": "^3.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0"
   }
 }
