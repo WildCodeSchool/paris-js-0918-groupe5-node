@@ -1,6 +1,6 @@
 backend/config.js
 
-backend/node_modules
+node_modules
 
 
 # Created by https://www.gitignore.io/api/linux,macos,sublimetext,visualstudiocode
