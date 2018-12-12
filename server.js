@@ -5,6 +5,7 @@ const cors = require("cors");
 const models = require("./models");
 const routerContacts = require('./routes/contact');
 const routerUsers = require('./routes/user')
+const routerEvents = require('./routes/event');
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -15,6 +16,7 @@ app.use(
 );
 app.use('/contacts', routerContacts);
 app.use('/users', routerUsers);
+app.use('/events', routerEvents);
 
 
 app.get("/", (req, res) => res.send("Hello World!"));

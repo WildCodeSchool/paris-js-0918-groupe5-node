@@ -18,9 +18,13 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   event.associate = function(models) {
     // associations can be defined here
-    event.belongsTo(models.user, { as: "caregiver" });
-    event.belongsTo(models.user, { as: "receiver" });
-    event.belongsTo(models.contact);
+    event.belongsTo(models.user);
+    // event.belongsTo(models.user, { as: "receiver" });
+    event.belongsTo(models.contact), {
+      foreignKey: {
+        allowNull: true
+      }
+    };
   };
   return event;
 };

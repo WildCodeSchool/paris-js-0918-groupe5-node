@@ -13,17 +13,21 @@ module.exports = (sequelize, DataTypes) => {
     preferenceOfContact: DataTypes.INTEGER, // false pour caregiver
     numberOfSubscriptions: DataTypes.INTEGER, // false pour caregiver
     subscriber: { type: DataTypes.BOOLEAN, allowNull : false},
+    isAdmin: { type: DataTypes.BOOLEAN, defaultValue : false }, // true pour caregiver
     status: { type : DataTypes.BOOLEAN, allowNull : false }
   }, {});
   user.associate = function(models) {
     // associations can be defined here
+    user.hasMany(models.event)
+
     user.belongsToMany(models.contact, {
       through: "user_contact",
-      
-      as: "caregiver",
-      foreignKey: "caregiverId"
-    }, models.event, {
-      through: "user_event",
+      // as: "caregiver",
+      // foreignKey: "contactCaregiverId"
+    });
+
+    user.belongsToMany(models.user, {
+      through: "assignees",
       as: "caregiver",
       foreignKey: "caregiverId"
     });
