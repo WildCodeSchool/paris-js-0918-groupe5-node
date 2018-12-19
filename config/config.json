@@ -1,14 +1,12 @@
 {
-  "test": {
-    "storage": "./db.sqlite3",
-    "database": "database_development",
-    "dialect": "sqlite",
-    "operatorsAliases": "false"
-  },
   "development": {
+    "database": "database_development",
+    "dialect": "sqlite"
+  },
+  "test": {
     "username": "root",
-    "password": "",
-    "database": "kali_test",
+    "password": null,
+    "database": "database_test",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
