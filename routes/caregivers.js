@@ -3,7 +3,7 @@ const router = express.Router();
 const models = require('../models');
 
 router.get('/', (req, res) => {
-    models.cargivers.findAll()
+    models.user.findAll()
     .then(data => {
         res.status(200).json(data)
     });
@@ -11,8 +11,8 @@ router.get('/', (req, res) => {
 
 router.post('/', (req,res) => {
     const data = req.body;
-    const newCargivers = new models.cargivers(data);
-    newCargivers.save()
+    const newCaregivers = new models.user(data);
+    newCaregivers.save()
         .then(newCargivers => {
             res.status(200).json(newCargivers)
         })
