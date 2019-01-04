@@ -1,27 +1,26 @@
 const express = require('express');
-const router = express.Router();
 const models = require('../models');
 
-router.get('/', (req,res) => {
-	models.event.findAll()
-	.then(data => {
-		res.status(200).json(data)
-	});
+const router = express.Router();
+
+router.get('/', (req, res) => {
+	models.Event.findAll()
+		.then((data) => {
+			res.status(200).json(data);
+		});
 });
 
-router.post('/', (req,res) => {
+router.post('/', (req, res) => {
 	const data = req.body;
-	console.log(req)
 	console.log(`Ajout de ${data}`);
-	const newEvent = new models.event(data);
+	const newEvent = new models.Event(data);
 	newEvent.save()
-		.then(newEvent => {
-			// when we received a newContact, we send back a JSON to the client
-			res.status(200).json(newEvent)
-        })
-        .catch(err => {
+		.then(() => {
+			res.status(200).json(newEvent);
+		})
+		.catch((err) => {
 			console.log(err.message);
-        });
+		});
 });
 
 module.exports = router;
