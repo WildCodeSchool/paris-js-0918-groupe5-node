@@ -1,7 +1,6 @@
-backend/config.js
+// config/config.json
 
-backend/node_modules
-
+node_modules/
 
 # Created by https://www.gitignore.io/api/linux,macos,sublimetext,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=linux,macos,sublimetext,visualstudiocode
