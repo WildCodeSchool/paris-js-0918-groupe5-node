@@ -2,20 +2,21 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const event = sequelize.define('event', {
-    name: DataTypes.STRING,
-    category: DataTypes.STRING,
-    dateBeginning: DataTypes.DATE,
-    dateEnd: DataTypes.DATE,
+    title: DataTypes.STRING,
+    address: DataTypes.STRING,
+    atHomeEvent: DataTypes.BOOLEAN,
+    begingDate: DataTypes.DATE,
+    endingDate: DataTypes.DATE,
     hourBeginning: DataTypes.TIME,
     hourEnd: DataTypes.TIME,
-    address: DataTypes.STRING,
     frequency: DataTypes.STRING,
-    accountable: DataTypes.STRING,
-    visibility: DataTypes.BOOLEAN,
-    recall: DataTypes.BOOLEAN,
-    immediateRecall: DataTypes.BOOLEAN,
-    mood: DataTypes.INTEGER,
-    status: DataTypes.BOOLEAN
+    responsible: DataTypes.STRING,
+    category: DataTypes.STRING,
+    visibleEvent: DataTypes.BOOLEAN,
+    followedVisit: DataTypes.BOOLEAN,
+    reminder: DataTypes.BOOLEAN,
+    immediateNotif: DataTypes.BOOLEAN,
+    mood: DataTypes.INTEGER
   }, {});
   event.associate = function(models) {
     // associations can be defined here
