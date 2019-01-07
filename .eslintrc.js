@@ -3,6 +3,6 @@ module.exports = {
 	"rules": {
 		"indent": 0,
     "no-tabs": 0,
-    "no-console": 0
+    "no-console": 0,
 	}
 };
