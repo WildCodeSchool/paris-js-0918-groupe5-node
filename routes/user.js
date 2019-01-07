@@ -2,19 +2,28 @@ const express = require('express');
 const router = express.Router();
 const models = require('../models');
 
-
 router.post('/', (req,res) => {
 	const data = req.body;
-	console.log("Ajout d'un user");
-	const NewUser = new models.user(data);
-	NewUser.save()
-		.then(NewUser => {
-			// when we received a NewUser, we send back a JSON to the client
-			res.status(200).json(NewUser)
+	console.log(`Ajout de ${data}`);
+	console.log(req.body)
+	const newUser = new models.user(data);
+	newUser.save()
+		.then(newUser => {
+			// when we received a newContact, we send back a JSON to the client
+			res.status(200).json(newUser)
         })
         .catch(err => {
-           console.log(err.message);
-        }); //ERREUR A REVOIR
+			res.send(err.message)
+			console.log(err.message);
+        });
 });
+
+router.get('/all', (req,res) => {
+	models.user.findAll()
+	.then(data => {
+		res.status(200).json(data)
+	});
+});
+
 
 module.exports = router;
