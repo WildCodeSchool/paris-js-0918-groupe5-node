@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+
 const models = require('./models');
 const routerContacts = require('./routes/contact');
 const routerUsers = require('./routes/user');
@@ -10,11 +11,7 @@ const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  extended: true,
-}));
-
-// routes
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/contacts', routerContacts);
 app.use('/users', routerUsers);
 app.use('/events', routerEvents);
