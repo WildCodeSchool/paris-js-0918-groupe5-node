@@ -7,7 +7,7 @@ const router = express.Router();
 const jwtSecret = require('../jwtSecret');
 const models = require('../models');
 
-router.post('/signup', (req, res) => {
+router.post('/signup', (req, res) => { // Créér un aidant
   const { password } = req.body;
   console.log("Ajout d'un contact");
   bcrypt.hash(password, 10, (err, hash) => { // bcrypt permet de crypter le mot de passe que le client rentre avant la création du user
