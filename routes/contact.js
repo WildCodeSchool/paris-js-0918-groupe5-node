@@ -17,11 +17,26 @@ router.get('/', (req,res) => {
 // 	}).then(data  => {
 // 		res.status(200).json(data)
 // 	})
-// })
+// }) 
 
 router.post('/', (req,res) => {
 	const data = req.body;
 	console.log("Ajout d'un contact");
+	const newContact = new models.contact(data);
+	newContact.save()
+		.then(newContact => {
+			// when we received a newContact, we send back a JSON to the client
+			res.status(200).json(newContact)
+        })
+        .catch(err => {
+           console.log(err.message);
+        });
+});
+
+router.delete('/:contactID', (req,res) => {
+	const data = req.body;
+	const contactID = req.params;
+	console.log("Suppression d'un contact");
 	const newContact = new models.contact(data);
 	newContact.save()
 		.then(newContact => {
