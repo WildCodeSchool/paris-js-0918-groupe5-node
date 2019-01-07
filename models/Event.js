@@ -1,7 +1,8 @@
 /* eslint-disable */
 'use strict';
+
 module.exports = (sequelize, DataTypes) => {
-  const event = sequelize.define('event', {
+  const event = sequelize.define('Event', {
     title: DataTypes.STRING,
     address: DataTypes.STRING,
     atHomeEvent: DataTypes.BOOLEAN,
@@ -18,15 +19,15 @@ module.exports = (sequelize, DataTypes) => {
     immediateNotif: DataTypes.BOOLEAN,
     mood: DataTypes.INTEGER
   }, {});
-  event.associate = function(models) {
+  event.associate = (models) => {
     // associations can be defined here
-    event.belongsTo(models.user);
+    event.belongsTo(models.User);
     // event.belongsTo(models.user, { as: "receiver" });
-    event.belongsTo(models.contact), {
+    event.belongsTo(models.Contact, {
       foreignKey: {
-        allowNull: true
-      }
-    };
+        allowNull: true,
+      },
+    });
   };
   return event;
 };

@@ -15,7 +15,7 @@ router.post('/', (req, res) => {
 	const data = req.body;
 	console.log('data => ', req.body);
 	// console.log(`Ajout de ${data}`);
-	const newEvent = new models.event(data);
+	const newEvent = new models.Event(data);
 	newEvent.save()
 		.then(() => {
 			res.status(200).json(newEvent);

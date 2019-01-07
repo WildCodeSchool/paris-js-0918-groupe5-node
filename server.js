@@ -20,7 +20,7 @@ app.use('/events', routerEvents);
 app.get('/', (req, res) => res.send('Hello World!'));
 
 app.post('/api', (req, res) => {
-  const newUser = new models.User({
+  const newUser = new models.user({
     lastName: req.body.lastName,
     firstName: req.body.firstName,
   });
@@ -29,11 +29,9 @@ app.post('/api', (req, res) => {
 });
 
 
-app.get('/api', (req, res) => {
-  models.user.findAll({})
-  .then(user => res.json(user));
-});
-
+// app.get('/api', (req, res) => (
+//   // models.user.findAll({}).then(user => res.json(user))
+// );
 
 const port = process.env.PORT || 4243;
 
