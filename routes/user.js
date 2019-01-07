@@ -4,7 +4,6 @@ const models = require('../models');
 
 router.post('/', (req,res) => {
 	const data = req.body;
-	console.log(`Ajout de ${data}`);
 	console.log(req.body)
 	const newUser = new models.user(data);
 	newUser.save()
