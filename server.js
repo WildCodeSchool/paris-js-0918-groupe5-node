@@ -19,14 +19,14 @@ app.use('/events', routerEvents);
 
 app.get('/', (req, res) => res.send('Hello World!'));
 
-app.post('/api', (req, res) => {
-  const newUser = new models.user({
-    lastName: req.body.lastName,
-    firstName: req.body.firstName,
-  });
-  newUser.save();
-  res.sendStatus(200);
-});
+// app.post('/api', (req, res) => {
+//   const newUser = new models.user({
+//     lastName: req.body.lastName,
+//     firstName: req.body.firstName,
+//   });
+//   newUser.save();
+//   res.sendStatus(200);
+// });
 
 
 // app.get('/api', (req, res) => (

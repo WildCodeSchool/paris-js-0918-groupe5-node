@@ -1,20 +1,17 @@
 const express = require('express');
 const models = require('../models');
 
-
 const router = express.Router();
 
 router.get('/', (req, res) => {
-	models.event.findAll()
+	models.Event.findAll()
 		.then((data) => {
-			res.status(200).json(data);
-		});
+      res.status(200).json(data);
+    });
 });
 
 router.post('/', (req, res) => {
 	const data = req.body;
-	console.log('data => ', req.body);
-	// console.log(`Ajout de ${data}`);
 	const newEvent = new models.Event(data);
 	newEvent.save()
 		.then(() => {
