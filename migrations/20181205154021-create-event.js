@@ -1,66 +1,67 @@
 'use strict';
+
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('events', {
+    return queryInterface.createTable('Events', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       category: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       dateBeginning: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       dateEnd: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       hourBeginning: {
-        type: Sequelize.TIME
+        type: Sequelize.TIME,
       },
       hourEnd: {
-        type: Sequelize.TIME
+        type: Sequelize.TIME,
       },
       address: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       frequency: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       accountable: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       visibility: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       recall: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       immediateRecall: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       mood: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       status: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('events');
-  }
+    return queryInterface.dropTable('Events');
+  },
 };

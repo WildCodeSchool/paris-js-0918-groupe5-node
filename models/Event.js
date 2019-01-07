@@ -1,6 +1,7 @@
 'use strict';
+
 module.exports = (sequelize, DataTypes) => {
-  const event = sequelize.define('event', {
+  const event = sequelize.define('Event', {
     name: DataTypes.STRING,
     category: DataTypes.STRING,
     dateBeginning: DataTypes.DATE,
@@ -14,17 +15,17 @@ module.exports = (sequelize, DataTypes) => {
     recall: DataTypes.BOOLEAN,
     immediateRecall: DataTypes.BOOLEAN,
     mood: DataTypes.INTEGER,
-    status: DataTypes.BOOLEAN
+    status: DataTypes.BOOLEAN,
   }, {});
-  event.associate = function(models) {
+  event.associate = (models) => {
     // associations can be defined here
-    event.belongsTo(models.user);
+    event.belongsTo(models.User);
     // event.belongsTo(models.user, { as: "receiver" });
-    event.belongsTo(models.contact), {
+    event.belongsTo(models.Contact, {
       foreignKey: {
-        allowNull: true
-      }
-    };
+        allowNull: true,
+      },
+    });
   };
   return event;
 };
