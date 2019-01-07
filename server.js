@@ -39,7 +39,7 @@ app.get('/api', (req, res) =>
   models.user.findAll({}).then(user => res.json(user))
 );
 
-const port = process.env.PORT || 4243;
+const port = process.env.PORT || 4244;
 
 models.sequelize.sync().then(() => {
   app.listen(port, () => console.log(`Listening on port ${port}...`));
