@@ -29,8 +29,8 @@ router.get('/all', (req, res) => {
     });
 });
 
-router.get('/events', (req, res) => {
-  const token = getToken(req); // on utilise la fonction créée dans getToken pour récupérer le token (clé créée lors du signin)
+router.get('/events', (req, res) => { // pour récupérer les events d'un user une fois connecté
+  const token = getToken(req); // on utilise la fonction créée dans getToken pour récupérer le token (clé créée lors du signin) qui identifie le user
   jwt.verify(token, jwtSecret, (err, decode) => { // decode c'est ce qu'il y a dans le tokenInfo (donc l'id)
     if (err) {
       res.sendStatus(403);
