@@ -43,7 +43,7 @@ const router = express.Router();
         if (err) {
           res.sendStatus(403);
         } else {
-          const caregiverId = decode.id; // on récupére le 1er receiver (le plus ancien créé) et je récupére ses events avec la méthode getEvents de sequelize
+          const caregiverId = decode.id;
           models.User.findById(caregiverId)
             .then((caregiver) => {
               caregiver.getReceiver()
