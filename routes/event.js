@@ -23,10 +23,14 @@ router.route('/')
               .then((caregiver) => {
                 caregiver.getReceiver() // je récupère les receiver du caregiver
                   .then((receivers) => {
-                    receivers[0].addEvent(event) // et je lie l'événement créée au 1er receiver
-                      .then((eventCreated) => {
-                        res.status(200).json(eventCreated);
-                      });
+                    if (receivers[0].status) {
+                      receivers[0].addEvent(event) // et je lie l'événement créée au 1er receiver
+                        .then((eventCreated) => {
+                          res.status(200).json(eventCreated);
+                        });
+                    } else {
+                      res.sendStatus(403);
+                    }
                   });
               });
           });
@@ -48,6 +52,8 @@ router.route('/')
                   .then((events) => {
                     res.status(200).json(events);
                 });
+              } else {
+                res.sendStatus(403);
               }
           });
         });
