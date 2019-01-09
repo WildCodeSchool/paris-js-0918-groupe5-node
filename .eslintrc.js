@@ -6,6 +6,7 @@ module.exports = {
     "no-console": 0,
     "strict": 0,
     "arrow-body-style": 0,
-    "no-unused-vars": 1
+    "no-unused-vars": 1,
+    "max-len": 0
 	}
 };
