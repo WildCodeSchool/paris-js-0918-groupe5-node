@@ -13,7 +13,31 @@ const router = express.Router();
 //   order: [['createdAt', 'DESC']],
 //   )}
 
-router.get('/events', (req, res) => { // pour récupérer les events d'un user une fois connecté
+router.route('/events')
+  .post((req, res) => {
+    const token = getToken(req); // on utilise la fonction créée dans getToken pour récupérer le token (clé créée lors du signin) qui identifie le user
+    jwt.verify(token, jwtSecret, (err, decode) => { // decode c'est ce qu'il y a dans le tokenInfo (donc l'id)
+      if (err) {
+        res.sendStatus(403);
+      } else {
+          const newEvent = {
+            ...req.body,
+          };
+          models.Event.create(newEvent)
+            .then((event) => {
+              models.User.findById(decode.id)
+                .then((caregiver) => {
+                  caregiver.getReceiver()
+                    .then((receivers) => {
+                      receivers[0].addEvent(event)
+                        .then((eventCreated) => { res.status(200).json(eventCreated); });
+                });
+            });
+          });
+      }
+    });
+  })
+  .get((req, res) => { // pour récupérer les events d'un user une fois connecté
   const token = getToken(req); // on utilise la fonction créée dans getToken pour récupérer le token (clé créée lors du signin) qui identifie le user
   jwt.verify(token, jwtSecret, (err, decode) => { // decode c'est ce qu'il y a dans le tokenInfo (donc l'id)
     if (err) {
@@ -28,27 +52,16 @@ router.get('/events', (req, res) => { // pour récupérer les events d'un user u
       //   order: [['createdAt', 'DESC']],
       // }).then(result=>console.log("receiverId", result))
       models.User.findById(decode.id).then((caregiver) => { // on checke que l'id dans le token corresponde à la foreign key de user qui est dans event pour avoir les event d'un user en particulier
-        caregiver.getReceiver().then((receivers) => {
+        caregiver.getReceiver().then((receivers) => { // méthode de sequelize pour récupérer les receivers du caregiver identifié
           // console.log('===================receivers', receivers);
-          
           // const idReceiversArr = receivers.map((receiver) => {
           //   return receiver.dataValues.id;
           // }).sort();
           // console.log(idReceiversArr[0]);
-          receivers[0].getEvents().then((events) => {
+          receivers[0].getEvents().then((events) => { // on récupére le 1er receiver (le plus ancien créé) et je récupére ses events avec la méthode getEvents de sequelize
             res.status(200).json(events);
           });
-
-          
-
-        //  receivers.findAll({
-        //     limit: 1,
-        //     where: {
-        //       id: 3,
-        //     },
-          // });
         });
-        // .then(receiver => console.log(receiver) || res.status(200).json(receiver));
       });
 
     //   .then((receiver) => {
@@ -74,7 +87,6 @@ router.get('/events', (req, res) => { // pour récupérer les events d'un user u
 router.route('/receivers/:caregiverId')
   .get((req, res) => {
     const { caregiverId } = req.params;
-
     models.User.findById(caregiverId).then((caregiver) => {
       caregiver.getReceiver().then((receivers) => {
         res.status(200).json(receivers);

@@ -49,7 +49,7 @@ router.post('/signin', (req, res) => {
               email,
               id: user.id,
             };
-            const token = jwt.sign(tokenInfo, jwtSecret); // et j'utilise le jwtSecret pour créér et plus tard décrypter le token que l'on a crée avec le tokenInfo
+            const token = jwt.sign(tokenInfo, jwtSecret); // je crée le token avec le tokenInfo et j'utilise le jwtSecret pour créér et plus tard décrypter le token que l'on a crée avec le tokenInfo
             console.log('token================', token);
             res.header('Access-Control-Expose-Headers', 'x-access-token'); // je crée un header de type 'access-contro...' avec le nom 'x-access-token')
             res.set('x-access-token', token);// je set la valeur du header avec le token
