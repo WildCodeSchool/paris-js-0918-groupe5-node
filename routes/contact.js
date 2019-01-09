@@ -29,6 +29,8 @@ router.route('/')
                         .then((contactCreated) => {
                           res.status(200).json(contactCreated);
                         });
+                    } else {
+                      res.sendStatus(403);
                     }
                   });
               });
@@ -51,6 +53,8 @@ router.route('/')
                   .then((contacts) => {
                     res.status(200).json(contacts);
                 });
+              } else {
+                res.sendStatus(403);
               }
           });
         });

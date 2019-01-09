@@ -28,7 +28,9 @@ router.route('/')
                         .then((eventCreated) => {
                           res.status(200).json(eventCreated);
                         });
-                      }
+                    } else {
+                      res.sendStatus(403);
+                    }
                   });
               });
           });
@@ -50,6 +52,8 @@ router.route('/')
                   .then((events) => {
                     res.status(200).json(events);
                 });
+              } else {
+                res.sendStatus(403);
               }
           });
         });
