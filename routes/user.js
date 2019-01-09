@@ -7,19 +7,66 @@ const getToken = require('../helpers/getToken');
 
 const router = express.Router();
 
+// .then(result => {
+//   result.findAll({
+//   limit: 1,
+//   order: [['createdAt', 'DESC']],
+//   )}
+
 router.get('/events', (req, res) => { // pour récupérer les events d'un user une fois connecté
   const token = getToken(req); // on utilise la fonction créée dans getToken pour récupérer le token (clé créée lors du signin) qui identifie le user
   jwt.verify(token, jwtSecret, (err, decode) => { // decode c'est ce qu'il y a dans le tokenInfo (donc l'id)
     if (err) {
       res.sendStatus(403);
     } else {
-      models.event.findAll({
-        where: {
-          userId: decode.id, // on checke que l'id dans le token corresponde à la foreign key de user qui est dans event pour avoir les event d'un user en particulier
-          status: true,
-        },
-      })
-        .then(events => res.status(200).json(events));
+      // models.User.findAll({
+      //   limit: 1,
+      //   where: {
+      //     userId: decode.id,
+      //     status: true,
+      //   },
+      //   order: [['createdAt', 'DESC']],
+      // }).then(result=>console.log("receiverId", result))
+      models.User.findById(decode.id).then((caregiver) => { // on checke que l'id dans le token corresponde à la foreign key de user qui est dans event pour avoir les event d'un user en particulier
+        caregiver.getReceiver().then((receivers) => {
+          // console.log('===================receivers', receivers);
+          
+          // const idReceiversArr = receivers.map((receiver) => {
+          //   return receiver.dataValues.id;
+          // }).sort();
+          // console.log(idReceiversArr[0]);
+          receivers[0].getEvents().then((events) => {
+            res.status(200).json(events);
+          });
+
+          
+
+        //  receivers.findAll({
+        //     limit: 1,
+        //     where: {
+        //       id: 3,
+        //     },
+          // });
+        });
+        // .then(receiver => console.log(receiver) || res.status(200).json(receiver));
+      });
+
+    //   .then((receiver) => {
+    //     models.Event.findAll({
+    //     where: {
+    //       status: true,
+    //       userId: receiver.id,
+    //     },
+    //   });
+    // })
+    // .then(events => res.status(200).json(events));
+      // models.Event.findAll({
+      //   where: {
+      //     userId: decode.id, // on checke que l'id dans le token corresponde à la foreign key de user qui est dans event pour avoir les event d'un user en particulier
+      //     status: true,
+      //   },
+      // })
+        // .then(events => res.status(200).json(events));
     }
   });
 });

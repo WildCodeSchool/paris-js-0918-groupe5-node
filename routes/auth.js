@@ -18,7 +18,7 @@ router.post('/signup', (req, res) => { // Créér un aidant
         ...req.body,
         password: hash,
       };
-      const newUser = new models.user(data); // je créee dinc un nouvel user avec un mot de passe crypté
+      const newUser = new models.User(data); // je créee dinc un nouvel user avec un mot de passe crypté
       newUser.save()
         .then((user) => {
         // when we received a newContact, we send back a JSON to the client
@@ -35,7 +35,7 @@ router.post('/signup', (req, res) => { // Créér un aidant
 router.post('/signin', (req, res) => {
   console.log('=======================', req.body);
   const { email, password } = req.body;
-  models.user.findOne({// je cherche dans la bdd un user dont le mail correspond au mail rentré par le user
+  models.User.findOne({// je cherche dans la bdd un user dont le mail correspond au mail rentré par le user
     where: {
       email,
     },
