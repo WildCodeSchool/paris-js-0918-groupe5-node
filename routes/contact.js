@@ -27,7 +27,11 @@ router.route('/')
                     if (receivers[0].status) {
                       receivers[0].addContact(contact)
                         .then((contactCreated) => {
-                          res.status(200).json(contactCreated);
+                          // console.log('=====================', contactCreated[0][0].dataValues);
+                          models.Contact.findById(contactCreated[0][0].dataValues.ContactId)
+                          .then((contactUpdated) => {
+                            res.status(200).json(contactUpdated);
+                          });
                         });
                     } else {
                       res.sendStatus(403);
