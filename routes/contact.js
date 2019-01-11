@@ -48,9 +48,6 @@ router.route('/')
       if (err) {
         res.sendStatus(403);
       } else {
-        const contactUpdated = {
-          ...req.body,
-        };
         models.User.findById(decode.id)
         .then((caregiver) => {
           caregiver.getReceiver()
@@ -75,15 +72,27 @@ router.route('/')
       if (err) {
         res.sendStatus(403);
       } else {
-        models.User.findById(decode.id)
-          .then(caregiver => caregiver.getReceiver())
-            .then(receivers => {
-              if (receivers[0].status) {
-                receivers[0].getContacts()
-              }
-            })
-      }
-    })
+        const contactUpdated = {
+          ...req.body,
+        };
+        models.Contact.update(contactUpdated)
+          .then((contact) => {
+            models.User.findById(decode.id)
+              .then((caregiver) => {
+                caregiver.getReceiver()
+                  .then((receivers) => {
+                    if (receivers[0].status) {
+                      receivers[0].getContacts(contactUpdated.id)
+                        .then(() => {
+                          receivers[0].setContact(contact)
+                            .then(newContactUpdated => res.status(200).json(newContactUpdated));
+                        });
+                    }
+                  });
+              });
+          });
+        }
+    });
   });
 
 // router.get('/:x', (req,res) => {
