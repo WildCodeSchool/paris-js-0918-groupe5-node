@@ -48,6 +48,9 @@ router.route('/')
       if (err) {
         res.sendStatus(403);
       } else {
+        const contactUpdated = {
+          ...req.body,
+        };
         models.User.findById(decode.id)
         .then((caregiver) => {
           caregiver.getReceiver()
@@ -55,7 +58,8 @@ router.route('/')
               if (receivers[0].status) {
                 receivers[0].getContacts()
                   .then((contacts) => {
-                    res.status(200).json(contacts);
+                    receivers[0].setContact(contactUpdated)
+                      .then(contactUpdated => res.status(200).json(contactUpdated));
                 });
               } else {
                 res.sendStatus(403);
@@ -64,6 +68,22 @@ router.route('/')
         });
       }
     });
+  })
+  .put((req, res) => {
+    const token = getToken(req);
+    jwt.verify(token, jwtSecret, (err, decode) => {
+      if (err) {
+        res.sendStatus(403);
+      } else {
+        models.User.findById(decode.id)
+          .then(caregiver => caregiver.getReceiver())
+            .then(receivers => {
+              if (receivers[0].status) {
+                receivers[0].getContacts()
+              }
+            })
+      }
+    })
   });
 
 // router.get('/:x', (req,res) => {
