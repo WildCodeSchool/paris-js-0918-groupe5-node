@@ -1,69 +1,33 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
-
 const models = require('../models');
-const jwtSecret = require('../jwtSecret');
-
-const getToken = require('../helpers/getToken');
 
 const router = express.Router();
 
 router.route('/')
   .post((req, res) => {
-    const token = getToken(req);
-    jwt.verify(token, jwtSecret, (err, decode) => {
-      if (err) {
-        res.sendStatus(403);
-      } else {
-        const newContact = {
-          ...req.body,
-        };
-        models.Contact.create(newContact)
-          .then((contact) => {
-            models.User.findById(decode.id)
-              .then((caregiver) => {
-                caregiver.getReceiver()
-                  .then((receivers) => {
-                    if (receivers[0].status) {
-                      receivers[0].addContact(contact)
-                        .then((contactCreated) => {
-                          // console.log('=====================', contactCreated[0][0].dataValues);
-                          models.Contact.findById(contactCreated[0][0].dataValues.ContactId)
-                          .then((contactUpdated) => {
-                            res.status(200).json(contactUpdated);
-                          });
-                        });
-                    } else {
-                      res.sendStatus(403);
-                    }
-                  });
-              });
+    const newContact = {
+      ...req.body,
+    };
+    const { selectedReceiverId } = req.caregiver;
+    models.Contact.create(newContact)
+    .then((contact) => {
+      models.User.findByPk(selectedReceiverId).then((receiver) => {
+        receiver.addContact(contact)
+          .then(() => {
+            res.status(200).json(contact);
           });
-      }
+      });
     });
   })
   .get((req, res) => {
-    const token = getToken(req);
-    jwt.verify(token, jwtSecret, (err, decode) => {
-      if (err) {
-        res.sendStatus(403);
-      } else {
-        models.User.findById(decode.id)
-        .then((caregiver) => {
-          caregiver.getReceiver()
-            .then((receivers) => {
-              if (receivers[0].status) {
-                receivers[0].getContacts()
-                  .then((contacts) => {
-                    res.status(200).json(contacts);
-                });
-              } else {
-                res.sendStatus(403);
-              }
+    const { selectedReceiverId } = req.caregiver;
+    models.User.findByPk(selectedReceiverId)
+      .then((receiver) => {
+        receiver.getContacts()
+          .then((contacts) => {
+            res.status(200).json(contacts);
           });
-        });
-      }
-    });
+      });
   });
 
 // router.get('/:x', (req,res) => {

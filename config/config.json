@@ -1,6 +1,7 @@
 {
   "development": {
     "database": "database_development",
+    "operatorAliases": false,
     "dialect": "sqlite"
   },
   "test": {

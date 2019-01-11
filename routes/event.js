@@ -3,40 +3,59 @@ const jwt = require('jsonwebtoken');
 
 const models = require('../models');
 const getToken = require('../helpers/getToken');
-const jwtSecret = require('../jwtSecret');
+const jwtSecret = require('../helpers/jwtSecret');
 
 const router = express.Router();
 
 router.route('/')
   .post((req, res) => {
-    const token = getToken(req); // on utilise la fonction créée dans getToken pour récupérer le token (clé créée lors du signin) qui identifie le user
-    jwt.verify(token, jwtSecret, (err, decode) => { // decode c'est ce qu'il y a dans le tokenInfo (donc l'id)
-      if (err) {
-        res.sendStatus(403);
-      } else {
-        const newEvent = {
-          ...req.body,
-        };
-        models.Event.create(newEvent) // on créée un nouvel event dans la table Event avec le contenu du req.body
-          .then((event) => {
-            models.User.findById(decode.id) // ensuite on va chercher le caregiver dont l'id correspond à celui du token
-              .then((caregiver) => {
-                caregiver.getReceiver() // je récupère les receiver du caregiver
-                  .then((receivers) => {
-                    if (receivers[0].status) {
-                      receivers[0].addEvent(event) // et je lie l'événement créée au 1er receiver
-                        .then((eventCreated) => {
-                          res.status(200).json(eventCreated);
-                        });
-                    } else {
-                      res.sendStatus(403);
-                    }
-                  });
+    const newEvent = {
+      ...req.body,
+    };
+    const { selectedReceiverId } = req.caregiver;
+    // creation of a new event in the Event table
+    models.Event.create(newEvent)
+      .then((eventCreated) => {
+        // we get the selected receiver
+        models.User.findByPk(selectedReceiverId)
+          .then((receiver) => {
+            // link the event to the receiver
+            receiver.addEvent(eventCreated)
+              .then(() => {
+                res.status(200).json(eventCreated);
               });
           });
-      }
-    });
+      });
   })
+  // .post((req, res) => {
+  //   const token = getToken(req); // on utilise la fonction créée dans getToken pour récupérer le token (clé créée lors du signin) qui identifie le user
+  //   jwt.verify(token, jwtSecret, (err, decode) => { // decode c'est ce qu'il y a dans le tokenInfo (donc l'id)
+  //     if (err) {
+  //       res.sendStatus(403);
+  //     } else {
+  //       const newEvent = {
+  //         ...req.body,
+  //       };
+  //       models.Event.create(newEvent) // on créée un nouvel event dans la table Event avec le contenu du req.body
+  //         .then((event) => {
+  //           models.User.findById(decode.id) // ensuite on va chercher le caregiver dont l'id correspond à celui du token
+  //             .then((caregiver) => {
+  //               caregiver.getReceiver() // je récupère les receiver du caregiver
+  //                 .then((receivers) => {
+  //                   if (receivers[0].status) {
+  //                     receivers[0].addEvent(event) // et je lie l'événement créée au 1er receiver
+  //                       .then((eventCreated) => {
+  //                         res.status(200).json(eventCreated);
+  //                       });
+  //                   } else {
+  //                     res.sendStatus(403);
+  //                   }
+  //                 });
+  //             });
+  //         });
+  //     }
+  //   });
+  // })
   .get((req, res) => { // pour récupérer les events d'un user une fois connecté
     const token = getToken(req); // on utilise la fonction créée dans getToken pour récupérer le token (clé créée lors du signin) qui identifie le user
     jwt.verify(token, jwtSecret, (err, decode) => { // decode c'est ce qu'il y a dans le tokenInfo (donc l'id)
@@ -60,17 +79,5 @@ router.route('/')
       }
     });
   });
-
-// router.post('/', (req, res) => {
-// 	const data = req.body;
-// 	const newEvent = new models.Event(data);
-// 	newEvent.save()
-// 		.then(() => {
-// 			res.status(200).json(newEvent);
-// 		})
-// 		.catch((err) => {
-// 			console.log(err.message);
-// 		});
-// });
 
 module.exports = router;
