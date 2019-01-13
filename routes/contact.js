@@ -3,12 +3,40 @@ const models = require('../models');
 
 const router = express.Router();
 
+router.route('/:idContact')
+  // update a contact
+  .put((req, res) => {
+    const { idContact } = req.params;
+    const updatedContact = req.body;
+    models.Contact.findByPk(idContact).then((contact) => {
+      contact.update({
+        ...updatedContact,
+      }).then(() => {
+        res.status(200).json(contact);
+      });
+    });
+  })
+  // delete a contact (change his status to false)
+  .delete((req, res) => {
+    const { idContact } = req.params;
+    models.Contact.findByPk(idContact).then((contact) => {
+      contact.update({
+        status: false,
+      }).then(() => {
+        res.sendStatus(200);
+      });
+    });
+  });
+
 router.route('/')
+  // create a new contact linked to the selected receiver
   .post((req, res) => {
-    const newContact = {
-      ...req.body,
-    };
+    // const newContact = {
+    //   ...req.body,
+    // };
+    const newContact = req.body;
     const { selectedReceiverId } = req.caregiver;
+    console.log(models.Contact.prototype);
     models.Contact.create(newContact)
     .then((contact) => {
       models.User.findByPk(selectedReceiverId).then((receiver) => {
@@ -19,11 +47,12 @@ router.route('/')
       });
     });
   })
+  // get the active contacts of the selected receiver
   .get((req, res) => {
     const { selectedReceiverId } = req.caregiver;
     models.User.findByPk(selectedReceiverId)
       .then((receiver) => {
-        receiver.getContacts()
+        receiver.getContacts({ where: { status: true } })
           .then((contacts) => {
             res.status(200).json(contacts);
           });
