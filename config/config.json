@@ -1,5 +1,6 @@
 {
   "development": {
+    "storage" : "./db.sqlite3",
     "database": "database_development",
     "operatorAliases": false,
     "dialect": "sqlite"
