@@ -7,6 +7,8 @@ module.exports = {
     "strict": 0,
     "arrow-body-style": 0,
     "no-unused-vars": 1,
-    "max-len": 0
+    "max-len": 0,
+    "no-param-reassign": 0,
+    "func-names": 0
 	}
 };
