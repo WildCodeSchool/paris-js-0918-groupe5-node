@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     firstName: { type: DataTypes.STRING, allowNull: false },
     address: { type: DataTypes.STRING, allowNull: false },
     phone: { type: DataTypes.STRING, allowNull: false },
-    dateOfBirth: DataTypes.DATE,
+    dateOfBirth: DataTypes.STRING,
     receiverBond: DataTypes.STRING, // allowNull: false for caregiver
     email: { type: DataTypes.STRING, unique: true }, // allowNull: false for caregiver
     password: { type: DataTypes.STRING, defaultValue: null }, // allowNull: false for caregiver
@@ -67,6 +67,14 @@ module.exports = (sequelize, DataTypes) => {
     .catch((err) => {
       throw new Error(err);
     }) : true;
+  });
+  user.beforeBulkCreate((users) => {
+    users.map((el) => {
+      if (el.password !== null) {
+        el.password = bcrypt.hashSync(el.password, 10);
+      }
+      return el;
+    });
   });
   return user;
 };
