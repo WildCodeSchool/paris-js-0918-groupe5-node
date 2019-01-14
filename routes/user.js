@@ -1,101 +1,116 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
-
 const models = require('../models');
-const getToken = require('../helpers/getToken');
-const jwtSecret = require('../jwtSecret');
 
 const router = express.Router();
 
-// .then(result => {
-//   result.findAll({
-//   limit: 1,
-//   order: [['createdAt', 'DESC']],
-//   )}
-
-// router.route('/receivers/:caregiverId')
-//   .get((req, res) => {
-//     const { caregiverId } = req.params; // on récupére le 1er receiver (le plus ancien créé) et je récupére ses events avec la méthode getEvents de sequelize
-//     models.User.findById(caregiverId).then((caregiver) => {
-//       caregiver.getReceiver().then((receivers) => {
-//         res.status(200).json(receivers);
-//       });
-//     });
-//   })
-//   .post((req, res) => {
-//     const { caregiverId } = req.params;
-//     const newReceiver = req.body;
-//     newReceiver.avatar = newReceiver.title === 'M.' ? '../assets/avatar_old_man.png' : '../assets/avatar_old_woman.png';
-
-//     models.User.create(newReceiver).then((receiver) => {
-//       models.User.findById(caregiverId).then((caregiver) => {
-//         caregiver.addReceiver(receiver).then((obj) => {
-//           res.status(200).json(obj);
-//         });
-//       });
-//     });
-//   });
-
-  router.route('/receivers')
+router.route('/receivers')
+  // get all the active receivers of the connected caregiver
   .get((req, res) => {
-    const token = getToken(req);
-      jwt.verify(token, jwtSecret, (err, decode) => {
-        if (err) {
-          res.sendStatus(403);
-        } else {
-          const caregiverId = decode.id;
-          models.User.findById(caregiverId)
-            .then((caregiver) => {
-              caregiver.getReceiver()
-                .then((receivers) => {
-                  res.status(200).json(receivers);
-                });
+    req.caregiver.getReceiver({ where: { status: true } })
+      .then((receivers) => {
+        res.status(200).json(receivers);
+      });
+  })
+  // create a new receiver and link it with the connected caregiver
+  .post((req, res) => {
+    const newReceiver = req.body;
+    newReceiver.avatar = newReceiver.title === 'M.'
+      ? '../assets/avatar_old_man.png'
+      : '../assets/avatar_old_woman.png';
+    models.User.create(newReceiver)
+      .then((receiver) => {
+        const receiverId = receiver.id;
+        req.caregiver.addReceiver(receiver)
+          .then(() => {
+            req.caregiver.update({
+              selectedReceiverId: receiverId,
             });
-        }
+            res.status(200).json(receiver);
+          });
+      });
+  });
+
+router.route('/receivers/:idReceiver')
+  // update the selected receiver
+  .put((req, res) => {
+    const { idReceiver } = req.params;
+    const updatedReceiver = req.body;
+    models.User.findByPk(idReceiver).then((receiver) => {
+      receiver.update({
+        ...updatedReceiver,
+      }).then(() => {
+        res.status(200).json(receiver);
+      });
     });
   })
-  .post((req, res) => {
-    const token = getToken(req);
-    jwt.verify(token, jwtSecret, (err, decode) => {
-      const caregiverId = decode.id;
-      if (err) {
-        res.sendStatus(403);
-      } else {
-        const newReceiver = req.body;
-        newReceiver.avatar = newReceiver.title === 'M.' ? '../assets/avatar_old_man.png' : '../assets/avatar_old_woman.png';
-        models.User.create(newReceiver)
-          .then((receiver) => {
-            models.User.findById(caregiverId)
-              .then((caregiver) => {
-                caregiver.addReceiver(receiver)
-                  .then((receiverCreated) => {
-                    res.status(200).json(receiverCreated);
-                  });
-              });
+  // delete the selected receiver (change his status to false)
+  .delete((req, res) => {
+    const { idReceiver } = req.params;
+    models.User.findByPk(idReceiver).then((receiver) => {
+      receiver.getEvents({ where: { status: true } })
+        .then((events) => {
+          // est-ce qu'on fais passer le statut des événement à faux ou bien est-ce qu'on casse les liens ac la table d'association
+          // est-ce qu'on supprime les contacts ou bien on les garde en mémoire pour le caregiver ?
+          events.forEach((eventEl) => {
+            eventEl.update({
+              status: false,
+            });
           });
-      }
+        }).then(() => {
+          receiver.update({
+            status: false,
+          }).then(() => {
+            req.caregiver.getReceiver((receivers) => {
+              req.caregiver.update({
+                selectedReceiverId: receivers.length > 0 ? receivers[0].id : -1,
+              });
+            });
+            res.sendStatus(200);
+          });
+        });
     });
   });
 
+router.route('/selectReceiver/:idReceiver')
+  // select an other receiver
+  .put((req, res) => {
+    const { idReceiver } = req.params;
+    models.User.findByPk(idReceiver).then((receiver) => {
+      req.caregiver.update({
+        selectedReceiverId: idReceiver,
+      }).then(() => {
+        res.status(200).json(receiver);
+      });
+    });
+  });
+
+router.route('/caregiver')
+  // update the connected caregiver
+  .put((req, res) => {
+    const updatedCaregiver = req.body;
+      req.caregiver.update({
+        ...updatedCaregiver,
+      }).then(() => {
+        res.status(200).json(req.caregiver);
+      });
+  })
+  // delete the connected caregiver (change his status to false)
+  .delete((req, res) => {
+      req.caregiver.update({
+        status: false,
+      }).then(() => {
+        res.sendStatus(200);
+      });
+  });
+
+
 router.route('/')
+  // get all the active users
   .get((req, res) => {
-    models.User.findAll().then((data) => {
+    models.User.findAll({ where: { status: true } }).then((data) => {
       res.status(200).json(data);
     });
   });
 
-  // .post((req, res) => {
-  //   const data = req.body;
-  //   // console.log("User added");
-  //   const NewUser = new models.User(data);
-  //   NewUser.save()
-  //     .then((user) => {
-  //       // when we received a NewUser, we send back a JSON to the client
-  //       res.status(200).json(user);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err.message);
-  //     }); // to do - error handling
-  // });
 
 module.exports = router;
