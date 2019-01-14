@@ -28,8 +28,9 @@ router.route('/')
   // get the active events linked to the selected receiver
   .get((req, res) => {
     const { selectedReceiverId } = req.caregiver;
-    models.Event.findByPk(selectedReceiverId)
+    models.User.findByPk(selectedReceiverId)
       .then((receiver) => {
+        console.log(receiver.prototype);
         receiver.getEvents({ where: { status: true } })
           .then((events) => {
             res.status(200).json(events);

@@ -56,18 +56,18 @@ router.route('/receivers/:idReceiver')
               status: false,
             });
           });
-        });
-
-      receiver.update({
-        status: false,
-      }).then(() => {
-        req.caregiver.getReceiver((receivers) => {
-          req.caregiver.update({
-            selectedReceiverId: receivers.length > 0 ? receivers[0].id : -1,
+        }).then(() => {
+          receiver.update({
+            status: false,
+          }).then(() => {
+            req.caregiver.getReceiver((receivers) => {
+              req.caregiver.update({
+                selectedReceiverId: receivers.length > 0 ? receivers[0].id : -1,
+              });
+            });
+            res.sendStatus(200);
           });
         });
-        res.sendStatus(200);
-      });
     });
   });
 
@@ -83,29 +83,6 @@ router.route('/selectReceiver/:idReceiver')
       });
     });
   });
-
-// router.route('/caregiver/contacts')
-//   // get all the active contact created by the connected caregiver
-//   .get((req, res) => {
-//     const { selectedReceiverId } = req.caregiver;
-//     req.caregiver.getReceiver({
-//       where: {
-//         status: true,
-//         id !== selectedReceiverId,
-//       },
-//     }).then((receivers) => {
-//       receivers.forEach((receiver) => {
-//         receiver.getContacts({
-//           where: {
-//             status: true,
-//           },
-//         })
-//           .then((contacts) => {
-
-//           });
-//       });
-//     });
-//   });
 
 router.route('/caregiver')
   // update the connected caregiver
