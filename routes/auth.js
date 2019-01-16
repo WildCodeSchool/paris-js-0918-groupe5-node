@@ -39,7 +39,7 @@ router.post('/signin', (req, res) => {
         res.header('Access-Control-Expose-Headers', 'x-access-token');
         // we set the value of the header with the token
         res.set('x-access-token', token);
-        res.status(200).send({ info: 'user connected' });
+        res.status(200).send({ id: user.id });
       } else {
         res.sendStatus(403);
       }
