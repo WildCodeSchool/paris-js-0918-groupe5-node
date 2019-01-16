@@ -101,6 +101,11 @@ router.route('/caregiver')
       }).then(() => {
         res.sendStatus(200);
       });
+  })
+  .get((req, res) => {
+    models.User.findByPk(req.caregiver.id).then((caregiver) => {
+      res.status(200).json(caregiver);
+    });
   });
 
 
@@ -111,6 +116,5 @@ router.route('/')
       res.status(200).json(data);
     });
   });
-
 
 module.exports = router;
