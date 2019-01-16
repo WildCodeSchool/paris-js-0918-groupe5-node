@@ -6,17 +6,18 @@ const router = express.Router();
 router.route('/receivers')
   // get all the active receivers of the connected caregiver
   .get((req, res) => {
+    const { selectedReceiverId } = req.caregiver;
     req.caregiver.getReceiver({ where: { status: true } })
       .then((receivers) => {
-        res.status(200).json(receivers);
+        res.status(200).json({ receivers, selectedReceiverId });
       });
   })
   // create a new receiver and link it with the connected caregiver
   .post((req, res) => {
     const newReceiver = req.body;
     newReceiver.avatar = newReceiver.title === 'M.'
-      ? '../assets/avatar_old_man.png'
-      : '../assets/avatar_old_woman.png';
+      ? 'http://localhost:4244/public/avatars/avatar_old_man.png'
+      : 'http://localhost:4244/public/avatars//avatar_old_woman.png';
     models.User.create(newReceiver)
       .then((receiver) => {
         const receiverId = receiver.id;
@@ -30,12 +31,22 @@ router.route('/receivers')
       });
   });
 
-router.route('/receivers/:idReceiver')
+router.route('/receiver/:idReceiver')
+  // get the selected receiver of the connected caregiver
+  .get((req, res) => {
+    const { idReceiver } = req.params;
+    models.User.findByPk(idReceiver).then((receiver) => {
+      res.status(200).json(receiver);
+    });
+  })
   // update the selected receiver
   .put((req, res) => {
     const { idReceiver } = req.params;
     const updatedReceiver = req.body;
     models.User.findByPk(idReceiver).then((receiver) => {
+      updatedReceiver.avatar = updatedReceiver.title === 'M.'
+      ? 'http://localhost:4244/public/avatars/avatar_old_man.png'
+      : 'http://localhost:4244/public/avatars//avatar_old_woman.png';
       receiver.update({
         ...updatedReceiver,
       }).then(() => {

@@ -36,6 +36,7 @@ app.use(morgan('dev'));
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/public', express.static('public'));
 app.use('/auth', routerAuth);
 // we always want to verify the token before any request after authentication
 app.use(verifyToken);
