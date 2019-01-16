@@ -8,6 +8,7 @@ router.route('/:idContact')
   .put((req, res) => {
     const { idContact } = req.params;
     const updatedContact = req.body;
+    // console.log('updatedContact : ', updatedContact);
     models.Contact.findByPk(idContact).then((contact) => {
       contact.update({
         ...updatedContact,
@@ -50,6 +51,7 @@ router.route('/')
   // get the active contacts of the selected receiver
   .get((req, res) => {
     const { selectedReceiverId } = req.caregiver;
+    console.log(selectedReceiverId);
     models.User.findByPk(selectedReceiverId)
       .then((receiver) => {
         receiver.getContacts({ where: { status: true } })
