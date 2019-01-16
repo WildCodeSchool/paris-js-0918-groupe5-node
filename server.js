@@ -43,7 +43,7 @@ app.use('/users', routerUsers);
 app.use('/contacts', routerContacts);
 app.use('/events', routerEvents);
 
-const port = process.env.PORT || 4244;
+const port = process.env.PORT || 4245;
 
 models.sequelize.sync().then(() => {
   app.listen(port, () => console.log(`Listening on port ${port}...`));
