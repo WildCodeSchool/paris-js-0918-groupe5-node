@@ -7,6 +7,9 @@ const router = express.Router();
 router.route('/:idContact')
   // create a new event linked to the selected receiver and a contact
   .post((req, res) => {
+    console.log('rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr');
+    console.log('rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr');
+    console.log('rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr');
     const newEvent = {
       ...req.body,
     };
