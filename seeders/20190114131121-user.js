@@ -5,7 +5,6 @@ const models = require('../models');
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return models.User.bulkCreate([{
-      id: 1,
       title: 'Mme',
       lastName: 'Jolivet',
       firstName: 'Karine',
@@ -26,7 +25,6 @@ module.exports = {
       updatedAt: '2019-01-14T10:24:29.956Z',
     },
     {
-      id: 2,
       title: 'M.',
       lastName: 'Jolivet',
       firstName: 'Maurice',
@@ -46,7 +44,6 @@ module.exports = {
       updatedAt: '2019-01-14T10:24:29.956Z',
     },
     {
-      id: 3,
       title: 'Mme',
       lastName: 'Jolivet',
       firstName: 'Mauricette',
@@ -66,7 +63,6 @@ module.exports = {
       updatedAt: '2019-01-14T10:24:29.956Z',
     },
     {
-      id: 4,
       title: 'M.',
       lastName: 'Doe',
       firstName: 'John',

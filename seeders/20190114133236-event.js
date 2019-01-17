@@ -3,7 +3,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('Events', [{
-      id: 1,
       title: 'Piqûre',
       address: null,
       atHomeEvent: true,
@@ -24,7 +23,6 @@ module.exports = {
       mood: 5,
     },
     {
-      id: 2,
       title: 'Pansement',
       address: null,
       atHomeEvent: true,
@@ -45,7 +43,6 @@ module.exports = {
       mood: 10,
     },
     {
-      id: 3,
       title: 'Bilan sanguin',
       address: '10 rue de l\'hôpital 75002 Paris',
       atHomeEvent: false,
@@ -66,7 +63,6 @@ module.exports = {
       mood: 5,
     },
     {
-      id: 4,
       title: 'Visite Ostéo',
       address: null,
       atHomeEvent: true,
@@ -87,7 +83,6 @@ module.exports = {
       mood: 10,
     },
     {
-      id: 5,
       title: 'Ménage',
       address: null,
       atHomeEvent: true,
@@ -108,7 +103,6 @@ module.exports = {
       mood: 5,
     },
     {
-      id: 7,
       title: 'Pansement',
       address: null,
       atHomeEvent: true,
@@ -129,7 +123,6 @@ module.exports = {
       mood: 0,
     },
     {
-      id: 7,
       title: 'Visite Sylvie',
       address: null,
       atHomeEvent: true,
@@ -147,10 +140,9 @@ module.exports = {
       updatedAt: '2019-01-14T10:24:29.956Z',
       ContactId: 4,
       UserId: 2,
-      // pas de mood
+      mood: null,
     },
     {
-      id: 8,
       title: 'Piqûre',
       address: null,
       atHomeEvent: true,
