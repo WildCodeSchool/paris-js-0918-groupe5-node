@@ -84,13 +84,20 @@ router.route('/receiver/:idReceiver')
 
 router.route('/selectReceiver/:idReceiver')
   // select an other receiver
-  .put((req, res) => {
+  .get((req, res) => {
     const { idReceiver } = req.params;
     models.User.findByPk(idReceiver).then((receiver) => {
       req.caregiver.update({
         selectedReceiverId: idReceiver,
       }).then(() => {
-        res.status(200).json(receiver);
+        receiver.getEvents({ where: { status: true } })
+          .then((events) => {
+            receiver.getContacts({ where: { status: true } })
+              .then((contacts) => {
+                res.status(200).json({ receiver, events, contacts });
+              });
+          });
+        // res.status(200).json(receiver);
       });
     });
   });
