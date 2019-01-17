@@ -10,6 +10,8 @@ module.exports = (sequelize, DataTypes) => {
     dateEnd: DataTypes.STRING,
     hourBeginning: DataTypes.TIME,
     hourEnd: DataTypes.TIME,
+    // hourBeginning: DataTypes.TIME,
+    // hourEnd: DataTypes.TIME,
     frequency: DataTypes.STRING,
     responsible: DataTypes.STRING,
     category: DataTypes.STRING,
@@ -17,7 +19,8 @@ module.exports = (sequelize, DataTypes) => {
     followedVisit: DataTypes.BOOLEAN,
     reminder: DataTypes.BOOLEAN,
     immediateNotif: DataTypes.BOOLEAN,
-    mood: DataTypes.INTEGER
+    mood: DataTypes.INTEGER,
+    status: { type: DataTypes.BOOLEAN, defaultValue: true}
   }, {});
   event.associate = (models) => {
     // associations can be defined here

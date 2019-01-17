@@ -1,18 +1,21 @@
 'use strict';
 
+const bcrypt = require('bcrypt');
+
 module.exports = (sequelize, DataTypes) => {
   const user = sequelize.define('User', {
     title: { type: DataTypes.STRING, allowNull: false },
     lastName: { type: DataTypes.STRING, allowNull: false },
     firstName: { type: DataTypes.STRING, allowNull: false },
     address: { type: DataTypes.STRING, allowNull: false },
-    phone: { type: DataTypes.INTEGER, allowNull: false },
-    dateOfBirth: DataTypes.DATE,
+    phone: { type: DataTypes.STRING, allowNull: false },
+    dateOfBirth: DataTypes.STRING,
     receiverBond: DataTypes.STRING, // allowNull: false for caregiver
-    email: DataTypes.STRING, // allowNull: false for caregiver
-    password: DataTypes.STRING, // allowNull: false for caregiver
+    email: { type: DataTypes.STRING, unique: true }, // allowNull: false for caregiver
+    password: { type: DataTypes.STRING, defaultValue: null }, // allowNull: false for caregiver
     preferenceOfContact: DataTypes.INTEGER, // allowNull: false for caregiver
     numberOfSubscriptions: DataTypes.INTEGER, // allowNull: false for caregiver
+    selectedReceiverId: { type: DataTypes.INTEGER, defaultValue: -1 },
     subscriber: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
@@ -53,5 +56,25 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'caregiverId',
     });
   };
+  // launched before the creation of an user
+  user.beforeSave((newUser) => {
+    return newUser.password !== null
+    ? bcrypt.hash(newUser.password, 10) // hash the password
+    .then((hash) => {
+      newUser.password = hash; // assign the hashed password
+      newUser.isAdmin = true; // isAdmin because we create a caregiver
+    })
+    .catch((err) => {
+      throw new Error(err);
+    }) : true;
+  });
+  user.beforeBulkCreate((users) => {
+    users.map((el) => {
+      if (el.password !== null) {
+        el.password = bcrypt.hashSync(el.password, 10);
+      }
+      return el;
+    });
+  });
   return user;
 };

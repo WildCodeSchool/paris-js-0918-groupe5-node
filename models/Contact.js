@@ -2,12 +2,12 @@
 
 module.exports = (sequelize, DataTypes) => {
   const contact = sequelize.define('Contact', {
-    title: DataTypes.STRING,
+    title: { type: DataTypes.STRING, allowNull: false },
     lastName: { type: DataTypes.STRING, allowNull: false },
     firstName: { type: DataTypes.STRING, allowNull: false },
     profession: DataTypes.STRING,
-    address: DataTypes.STRING,
-    phone: DataTypes.INTEGER,
+    address: { type: DataTypes.STRING, allowNull: false },
+    phone: DataTypes.STRING,
     email: DataTypes.STRING,
     preferenceOfContact: { type: DataTypes.STRING, allowNull: false },
     category: { type: DataTypes.STRING, allowNull: false },

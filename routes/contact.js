@@ -1,61 +1,64 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
-
 const models = require('../models');
-const jwtSecret = require('../jwtSecret');
-
-const getToken = require('../helpers/getToken');
 
 const router = express.Router();
 
-router.route('/')
-  .post((req, res) => {
-    const token = getToken(req);
-    jwt.verify(token, jwtSecret, (err, decode) => {
-      if (err) {
-        res.sendStatus(403);
-      } else {
-        const newContact = {
-          ...req.body,
-        };
-        models.Contact.create(newContact)
-          .then((contact) => {
-            models.User.findById(decode.id)
-              .then((caregiver) => {
-                caregiver.getReceiver()
-                  .then((receivers) => {
-                    if (receivers[0].status) {
-                      receivers[0].addContact(contact)
-                        .then((contactCreated) => {
-                          res.status(200).json(contactCreated);
-                        });
-                    }
-                  });
-              });
-          });
-      }
+router.route('/:idContact')
+  // update a contact
+  .put((req, res) => {
+    const { idContact } = req.params;
+    const updatedContact = req.body;
+    // console.log('updatedContact : ', updatedContact);
+    models.Contact.findByPk(idContact).then((contact) => {
+      contact.update({
+        ...updatedContact,
+      }).then(() => {
+        res.status(200).json(contact);
+      });
     });
   })
-  .get((req, res) => {
-    const token = getToken(req);
-    jwt.verify(token, jwtSecret, (err, decode) => {
-      if (err) {
-        res.sendStatus(403);
-      } else {
-        models.User.findById(decode.id)
-        .then((caregiver) => {
-          caregiver.getReceiver()
-            .then((receivers) => {
-              if (receivers[0].status) {
-                receivers[0].getContacts()
-                  .then((contacts) => {
-                    res.status(200).json(contacts);
-                });
-              }
-          });
-        });
-      }
+  // delete a contact (change his status to false)
+  .delete((req, res) => {
+    const { idContact } = req.params;
+    models.Contact.findByPk(idContact).then((contact) => {
+      contact.update({
+        status: false,
+      }).then(() => {
+        res.sendStatus(200);
+      });
     });
+  });
+
+router.route('/')
+  // create a new contact linked to the selected receiver
+  .post((req, res) => {
+    // const newContact = {
+    //   ...req.body,
+    // };
+    const newContact = req.body;
+    const { selectedReceiverId } = req.caregiver;
+    console.log(models.Contact.prototype);
+    models.Contact.create(newContact)
+    .then((contact) => {
+      models.User.findByPk(selectedReceiverId).then((receiver) => {
+        receiver.addContact(contact)
+          .then(() => {
+            res.status(200).json(contact);
+          });
+      });
+    });
+  })
+  // get the active contacts of the selected receiver
+  .get((req, res) => {
+    const { selectedReceiverId } = req.caregiver;
+    console.log(selectedReceiverId);
+    models.User.findByPk(selectedReceiverId)
+      .then((receiver) => {
+        receiver.getContacts({ where: { status: true } })
+          .then((contacts) => {
+            res.status(200).json(contacts);
+          });
+      });
   });
 
 // router.get('/:x', (req,res) => {
