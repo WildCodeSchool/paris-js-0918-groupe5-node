@@ -183,7 +183,7 @@ module.exports = {
       createdAt: '2019-01-14T10:24:29.956Z',
       updatedAt: '2019-01-14T10:24:29.956Z',
       ContactId: 7,
-      UserId: 2,
+      UserId: 3,
       mood: 10,
     },
     {
@@ -204,7 +204,7 @@ module.exports = {
       createdAt: '2019-01-14T10:24:29.956Z',
       updatedAt: '2019-01-14T10:24:29.956Z',
       ContactId: 4,
-      UserId: 2,
+      UserId: 3,
       mood: 10,
     },
     {
@@ -225,7 +225,7 @@ module.exports = {
       createdAt: '2019-01-14T10:24:29.956Z',
       updatedAt: '2019-01-14T10:24:29.956Z',
       ContactId: null,
-      UserId: 2,
+      UserId: 3,
       mood: 0,
     },
     {
@@ -245,7 +245,7 @@ module.exports = {
       createdAt: '2019-01-14T10:24:29.956Z',
       updatedAt: '2019-01-14T10:24:29.956Z',
       ContactId: 4,
-      UserId: 2,
+      UserId: 3,
       mood: 5,
     },
     {
@@ -265,7 +265,7 @@ module.exports = {
       createdAt: '2019-01-14T10:24:29.956Z',
       updatedAt: '2019-01-14T10:24:29.956Z',
       ContactId: 4,
-      UserId: 2,
+      UserId: 3,
       mood: 10,
     },
     {
@@ -285,7 +285,7 @@ module.exports = {
       createdAt: '2019-01-14T10:24:29.956Z',
       updatedAt: '2019-01-14T10:24:29.956Z',
       ContactId: 4,
-      UserId: 2,
+      UserId: 3,
       mood: 10,
     },
     {
@@ -305,7 +305,7 @@ module.exports = {
       createdAt: '2019-01-14T10:24:29.956Z',
       updatedAt: '2019-01-14T10:24:29.956Z',
       ContactId: 4,
-      UserId: 2,
+      UserId: 3,
       mood: null,
     },
     {
@@ -325,7 +325,7 @@ module.exports = {
       createdAt: '2019-01-14T10:24:29.956Z',
       updatedAt: '2019-01-14T10:24:29.956Z',
       ContactId: 7,
-      UserId: 2,
+      UserId: 3,
       mood: 5,
     }], {});
   },
