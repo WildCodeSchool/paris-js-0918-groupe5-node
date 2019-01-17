@@ -2,8 +2,8 @@
   "development": {
     "storage" : "./db.sqlite3",
     "database": "database_development",
-    "operatorAliases": false,
-    "dialect": "sqlite"
+    "dialect": "sqlite",
+    "operatorsAliases": false
   },
   "test": {
     "username": "root",
