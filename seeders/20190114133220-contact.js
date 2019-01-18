@@ -3,7 +3,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
       return queryInterface.bulkInsert('Contacts', [{
-        id: 1,
         title: 'Mme',
         lastName: 'A',
         firstName: 'Jane',
@@ -19,7 +18,6 @@ module.exports = {
         updatedAt: '2019-01-14T10:24:29.956Z',
       },
       {
-        id: 2,
         title: 'M.',
         lastName: 'B',
         firstName: 'Roger',
@@ -35,7 +33,6 @@ module.exports = {
         updatedAt: '2019-01-14T10:24:29.956Z',
       },
       {
-        id: 3,
         title: 'M.',
         lastName: 'C',
         firstName: 'Jean',
@@ -44,14 +41,13 @@ module.exports = {
         phone: '0699999999',
         email: 'jean.c@gmail.com',
         preferenceOfContact: 'SMS',
-        category: 'Proche',
+        category: 'Proches',
         comment: null,
         status: true,
         createdAt: '2019-01-14T10:24:29.956Z',
         updatedAt: '2019-01-14T10:24:29.956Z',
       },
       {
-        id: 4,
         title: 'Mme',
         lastName: 'D',
         firstName: 'Jane',
@@ -67,7 +63,6 @@ module.exports = {
         updatedAt: '2019-01-14T10:24:29.956Z',
       },
       {
-        id: 5,
         title: 'M.',
         lastName: 'E',
         firstName: 'Roger',
@@ -83,7 +78,6 @@ module.exports = {
         updatedAt: '2019-01-14T10:24:29.956Z',
       },
       {
-        id: 6,
         title: 'M.',
         lastName: 'F',
         firstName: 'Jean',
@@ -92,14 +86,13 @@ module.exports = {
         phone: '0699999999',
         email: 'jean.f@gmail.com',
         preferenceOfContact: 'SMS',
-        category: 'Proche',
+        category: 'Proches',
         comment: null,
         status: true,
         createdAt: '2019-01-14T10:24:29.956Z',
         updatedAt: '2019-01-14T10:24:29.956Z',
       },
       {
-        id: 7,
         title: 'Mme',
         lastName: 'G',
         firstName: 'Jane',
@@ -115,7 +108,6 @@ module.exports = {
         updatedAt: '2019-01-14T10:24:29.956Z',
       },
       {
-        id: 8,
         title: 'M.',
         lastName: 'H',
         firstName: 'Roger',
@@ -131,7 +123,6 @@ module.exports = {
         updatedAt: '2019-01-14T10:24:29.956Z',
       },
       {
-        id: 9,
         title: 'M.',
         lastName: 'I',
         firstName: 'Jean',
@@ -140,7 +131,7 @@ module.exports = {
         phone: '0699999999',
         email: 'jean.i@gmail.com',
         preferenceOfContact: 'SMS',
-        category: 'Proche',
+        category: 'Proches',
         comment: null,
         status: true,
         createdAt: '2019-01-14T10:24:29.956Z',
