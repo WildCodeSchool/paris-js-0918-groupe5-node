@@ -37,7 +37,8 @@ router.route('/')
     // };
     const newContact = req.body;
     const { selectedReceiverId } = req.caregiver;
-    console.log(models.Contact.prototype);
+    // console.log(models.Contact.prototype);
+    console.log('====================================', selectedReceiverId);
     models.Contact.create(newContact)
     .then((contact) => {
       models.User.findByPk(selectedReceiverId).then((receiver) => {
@@ -51,7 +52,7 @@ router.route('/')
   // get the active contacts of the selected receiver
   .get((req, res) => {
     const { selectedReceiverId } = req.caregiver;
-    console.log(selectedReceiverId);
+    console.log('====================================', selectedReceiverId);
     models.User.findByPk(selectedReceiverId)
       .then((receiver) => {
         receiver.getContacts({ where: { status: true } })
