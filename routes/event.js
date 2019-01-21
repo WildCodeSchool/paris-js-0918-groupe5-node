@@ -5,35 +5,32 @@ const models = require('../models');
 class MegaClassLaClass {
   constructor(allInfo, i) {
     this.title = allInfo.title;
+    this.OtherAddressChecked = allInfo.OtherAddressChecked;
     this.address = allInfo.address;
-    // this.startingDate = moment(allInfo.startingDate).add(i, 'days').toISOString();
     this.startingDate = moment(allInfo.startingDate).add(i, 'days').toString();
-    this.endingDate = allInfo.endingDate;
+    this.endingDate = moment(allInfo.startingDate).add(i + 1, 'days').toString();
     this.frequency = allInfo.frequency;
     this.daysSelected = allInfo.daysSelected;
     this.contact = allInfo.contact;
     this.category = allInfo.category;
+    this.events = allInfo.events;
+    this.visibleEvent = allInfo.visibleEvent;
+    this.followedVisit = allInfo.followedVisit;
+    this.reminder = allInfo.reminder;
+    this.immediateNotif = allInfo.immediateNotif;
   }
 }
-
-// const promise1 = Promise.resolve(3);
-// const promise2 = 42;
-// const promise3 = new Promise(resolve => setTimeout(resolve, 100, 'foo'));
-
-// Promise.all([promise1, promise2, promise3]).then(values => console.log(values));
 
 const router = express.Router();
 
 router.route('/:idContact')
   // create a new event linked to the selected receiver and a contact
   .post((req, res) => {
-    const newEvent = {
-      ...req.body,
-    };
+    const newEvent = req.body;
     const { idContact } = req.params;
     const { selectedReceiverId } = req.caregiver;
     // creation of a new event in the Event table
-    // console.log(newEvent);
+    console.log('duration');
     if (newEvent.frequency === '' || newEvent.frequency === 'once') {
       models.Event.create(newEvent)
       .then((eventCreated) => {
@@ -47,6 +44,9 @@ router.route('/:idContact')
                 models.Contact.findByPk(idContact).then((contact) => {
                   contact.addEvent(eventCreated).then(() => {
                     res.status(200).json(eventCreated);
+                    // console.log('eventCreated');
+                    // console.log(eventCreated);
+                    // console.log('eventCreated');
                   });
                 });
                 } else {
@@ -57,14 +57,26 @@ router.route('/:idContact')
           });
       });
     } else if (newEvent.frequency === 'everyday') {
+      console.log('everyday');
+      const responsed = [];
       const daynum1 = moment(newEvent.startingDate).date();
       const daynum2 = moment(newEvent.endingDate).date();
       const periodeOfTime = daynum2 - daynum1;
+      // TEST ON DURATION
+      // TEST ON DURATION
+      // TEST ON DURATION
+      const duration = moment.duration(moment(newEvent.startingDate).diff(moment(newEvent.endingDate), 'd'));
+      // const duration = moment(newEvent.startingDate).subtract(moment(newEvent.endingDate)).days();
+      // a.subtract(b).days()
+      console.log('duration');
+      console.log(duration);
+      console.log(duration.data);
+      // TEST ON DURATION
+      // TEST ON DURATION
+      // TEST ON DURATION
       const arrayOfPromice = [];
-
       for (let i = 0; i < periodeOfTime + 1; i += 1) {
-        // arrayOfPromice.push(Promise.resolve(models.Event.create(new MegaClassLaClass(newEvent, i))));
-        arrayOfPromice.push(new Promise((resolve, reject) => {
+        arrayOfPromice.push(new Promise((resolve) => {
           models.Event.create(new MegaClassLaClass(newEvent, i))
             .then((eventCreated) => {
               // we get the selected receiver
@@ -76,57 +88,25 @@ router.route('/:idContact')
                       if (idContact !== 0) {
                       models.Contact.findByPk(idContact).then((contact) => {
                         contact.addEvent(eventCreated);
-                        // .then(() => {
-                        //   res.status(200).json(eventCreated);
-                        //   // console.log(eventCreated.dataValues);
-                        // });
+                        resolve(eventCreated);
+                        responsed.push(eventCreated.dataValues);
+                        // .then(() => res.json(eventCreated));
                       });
                       } else {
                         // res.sen(200).json(eventCreated);
-                        res.sendStatus(200);
+                        res.sendStatus(500);
                         console.log('esle.........');
                       }
                     });
                 });
             });
         }));
-        console.log('rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr');
-        // models.Event.create(new MegaClassLaClass(newEvent, i))
-        // console.log(new MegaClassLaClass(newEvent, i));
       }
       Promise
       .all(arrayOfPromice)
-      .then(() => res.sendStatus(200))
-      // .then(() => res.sen(200).json(eventCreated))
+      .then(() => res.status(200).json(responsed))
       .catch(err => console.log(err));
-
-    //   return Promise.all([ 'task1', 'task2', 'task3' ]).then(arrayOfResults => {
-    //     // Do something with all results
-    // });
-
-        // models.Event.create(newEvent)
-        // .then((eventCreated) => {
-        //   // we get the selected receiver
-        //   models.User.findByPk(selectedReceiverId)
-        //     .then((receiver) => {
-        //       // link the event to the receiver
-        //       receiver.addEvent(eventCreated)
-        //         .then(() => {
-        //           if (idContact !== 0) {
-        //           models.Contact.findByPk(idContact).then((contact) => {
-        //             contact.addEvent(eventCreated).then(() => {
-        //               res.status(200).json(eventCreated);
-        //               // console.log(eventCreated.dataValues);
-        //             });
-        //           });
-        //           } else {
-        //             res.status(200).json(eventCreated);
-        //             console.log('esle.........');
-        //           }
-        //         });
-        //     });
-        // });
-    } else console.log('saluts les cppains');
+    } else console.log('saluts les copains');
   });
 
 router.route('/')
