@@ -72,7 +72,6 @@ router.post('/forgotPassword', (req, res) => {
       const token = jwt.sign(tokenInfo, jwtSecret);
       res.header('Access-Control-Expose-Headers', 'x-access-token');
       res.set('x-access-token', token);
-      // user.resetPasswordToken = token;
       const smtpTransport = nodemailer.createTransport({
         service: 'Gmail',
         auth: {
@@ -82,7 +81,7 @@ router.post('/forgotPassword', (req, res) => {
       });
       const mailOptions = {
         to: user.dataValues.email,
-        from: 'Kalify',
+        from: 'Kalify <widaad.barreto@gmail.com>',
         subject: 'Réinitialisation de votre mot de passe Kalify',
         text: `Bonjour,\n
           Vous recevez cet e-mail suite à une demande de réinitialisation de votre mot de passe sur le site Kalify.\n
@@ -95,29 +94,27 @@ router.post('/forgotPassword', (req, res) => {
       smtpTransport.sendMail(mailOptions, (err) => {
         if (err) { throw (err); }
         console.log('mail sent');
-        // req.flash('success', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
-        // done(err, 'done');
       });
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(404);
     }
-    res.sendStatus(404);
   });
 });
-// })
-// });
 
-router.put('/reset', (req, res) => {
-  const token = getToken(req);
-  const { password } = req.body;
-  const decode = jwt.verify(token, jwtSecret);
-  models.User.findOne({ where: { id: decode.id } })
-    .then((user) => {
-      user.update({
-        password,
-      }).then(() => {
-        res.sendStatus(201);
-      });
-    });
-});
+// router.put('/reset', (req, res) => {
+//   const token = getToken(req);
+//   const { password } = req.body;
+//   const decode = jwt.verify(token, jwtSecret);
+//   models.User.findOne({ where: { id: decode.id } })
+//     .then((user) => {
+//       user.update({
+//         password,
+//       }).then(() => {
+//         res.sendStatus(201);
+//       });
+//     });
+// });
 
 router.put('/reset', async (req, res) => {
   const token = getToken(req);
