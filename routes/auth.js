@@ -86,7 +86,7 @@ router.post('/forgotPassword', (req, res) => {
         text: `Bonjour,\n
           Vous recevez cet e-mail suite à une demande de réinitialisation de votre mot de passe sur le site Kalify.\n
           Merci de cliquer sur le lien ci-dessous afin de choisir un nouveau mot de passe:\n
-          http://localhost:3000/reset?token=${token} \n
+          http://localhost:3000/reset/${token} \n
           Si vous n'êtes pas à l'origine de cette demande, nous vous invitons à ignorer ce mail et votre mot de passe restera inchangé.\n
           Cordialement,\n
           L'équipe Kalify\n`,
