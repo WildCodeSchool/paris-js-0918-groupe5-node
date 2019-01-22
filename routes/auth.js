@@ -73,7 +73,7 @@ router.post('/forgotPassword', (req, res) => {
       res.header('Access-Control-Expose-Headers', 'x-access-token');
       res.set('x-access-token', token);
 
-      console.log('((((((((((((((((((((((((', user.dataValues.resetPasswordExpires)
+      console.log('((((((((((((((((((((((((', user.dataValues.resetPasswordExpires);
       const smtpTransport = nodemailer.createTransport({
         service: 'Gmail',
         auth: {
@@ -85,18 +85,18 @@ router.post('/forgotPassword', (req, res) => {
         to: user.dataValues.email,
         from: 'Kalify',
         subject: 'Réinitialisation de votre mot de passe Kalify',
-        text: 'Bonjour,\n\n' +
-          'Vous recevez cet e-mail suite à une demande de réinitialisation de votre mot de passe sur le site Kalify.\n\n' +
-          'Merci de cliquer sur le lien ci-dessous afin de choisir un nouveau mot de passe:\n\n' +
-          'http://' + req.headers.host + '/reset/' + token + '\n\n' +
-          'Si vous n\'êtes pas à l\'origine de cette demande, nous vous invitons à ignorer ce mail et votre mot de passe restera inchangé.\n\n' +
-          'Cordialement,\n\n' +
-          'L\'équipe Kalify\n\n'
+        text: `Bonjour,\n\n
+          Vous recevez cet e-mail suite à une demande de réinitialisation de votre mot de passe sur le site Kalify.\n\n
+          Merci de cliquer sur le lien ci-dessous afin de choisir un nouveau mot de passe:\n\n
+          http://localhost:3000/reset?token=${token} \n\n
+          Si vous n'êtes pas à l'origine de cette demande, nous vous invitons à ignorer ce mail et votre mot de passe restera inchangé.\n\n
+          Cordialement,\n\n
+          L'équipe Kalify\n\n`,
       };
       smtpTransport.sendMail(mailOptions, (err) => {
         if (err) { throw (err); }
         console.log('mail sent');
-        req.flash('success', 'An e-mail has been sent to ' + user.dataValues.email + ' with further instructions.');
+        req.flash('success', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
         // done(err, 'done');
       });
     }
