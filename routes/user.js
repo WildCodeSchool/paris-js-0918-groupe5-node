@@ -94,7 +94,11 @@ router.route('/selectReceiver/:idReceiver')
           .then((events) => {
             receiver.getContacts({ where: { status: true } })
               .then((contacts) => {
-                res.status(200).json({ receiver, events, contacts });
+                res.status(200).json({
+                  receiver,
+                  events,
+                  contacts,
+                });
               });
           });
         // res.status(200).json(receiver);

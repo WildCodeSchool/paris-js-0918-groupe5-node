@@ -26,6 +26,7 @@ router.post('/signin', (req, res) => {
     },
   })
   .then((user) => {
+    console.log(password, ' compare to ', user.password);
     bcrypt.compare(password, user.password, (err, match) => {
       if (match) {
         const tokenInfo = {
@@ -34,7 +35,7 @@ router.post('/signin', (req, res) => {
         };
         // creation of the token with the tokenInfo
         // we use the jwtSecret to create it (and decrypt it later)
-        const token = jwt.sign(tokenInfo, jwtSecret);
+        const token = jwt.sign(tokenInfo, jwtSecret, { expiresIn: '1d' });
         // creation of an header 'Access-Control...' with the name 'x-access-token'
         res.header('Access-Control-Expose-Headers', 'x-access-token');
         // we set the value of the header with the token
