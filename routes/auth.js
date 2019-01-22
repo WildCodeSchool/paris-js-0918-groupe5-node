@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const getToken = require('../helpers/getToken');
 
 const jwtSecret = require('../helpers/jwtSecret');
 const models = require('../models');
@@ -62,18 +63,16 @@ router.post('/forgotPassword', (req, res) => {
     },
   })
   .then((user) => {
-    console.log('+++++++++++++++', user);
     if (user) {
-      user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+      // user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
       const tokenInfo = {
-        resetPasswordExpires: user.resetPasswordExpires,
-        email: user.email,
+        id: user.id,
+        expiresIn: '6h',
       };
       const token = jwt.sign(tokenInfo, jwtSecret);
       res.header('Access-Control-Expose-Headers', 'x-access-token');
       res.set('x-access-token', token);
-
-      console.log('((((((((((((((((((((((((', user.dataValues.resetPasswordExpires);
+      // user.resetPasswordToken = token;
       const smtpTransport = nodemailer.createTransport({
         service: 'Gmail',
         auth: {
@@ -85,78 +84,50 @@ router.post('/forgotPassword', (req, res) => {
         to: user.dataValues.email,
         from: 'Kalify',
         subject: 'Réinitialisation de votre mot de passe Kalify',
-        text: `Bonjour,\n\n
-          Vous recevez cet e-mail suite à une demande de réinitialisation de votre mot de passe sur le site Kalify.\n\n
-          Merci de cliquer sur le lien ci-dessous afin de choisir un nouveau mot de passe:\n\n
-          http://localhost:3000/reset?token=${token} \n\n
-          Si vous n'êtes pas à l'origine de cette demande, nous vous invitons à ignorer ce mail et votre mot de passe restera inchangé.\n\n
-          Cordialement,\n\n
-          L'équipe Kalify\n\n`,
+        text: `Bonjour,\n
+          Vous recevez cet e-mail suite à une demande de réinitialisation de votre mot de passe sur le site Kalify.\n
+          Merci de cliquer sur le lien ci-dessous afin de choisir un nouveau mot de passe:\n
+          http://localhost:3000/reset?token=${token} \n
+          Si vous n'êtes pas à l'origine de cette demande, nous vous invitons à ignorer ce mail et votre mot de passe restera inchangé.\n
+          Cordialement,\n
+          L'équipe Kalify\n`,
       };
       smtpTransport.sendMail(mailOptions, (err) => {
         if (err) { throw (err); }
         console.log('mail sent');
-        req.flash('success', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
+        // req.flash('success', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
         // done(err, 'done');
       });
     }
+    res.sendStatus(404);
   });
 });
 // })
 // });
 
+router.put('/reset', (req, res) => {
+  const token = getToken(req);
+  const { password } = req.body;
+  const decode = jwt.verify(token, jwtSecret);
+  models.User.findOne({ where: { id: decode.id } })
+    .then((user) => {
+      user.update({
+        password,
+      }).then(() => {
+        res.sendStatus(201);
+      });
+    });
+});
 
-// router.post('/forgotPassword', (req, res, next) => {
-//   async.waterfall([
-//     (done) => {
-//       crypto.randomBytes(20, (err, buf) => {
-//         const token = buf.toString('hex');
-//         done(err, token);
-//       });
-//     },
-//     (token, done) => {
-//       models.User.findOne({ where: { email: req.body.email } }, (err, user) => {
-//         if (!user) {
-//           req.flash('error', 'No account with that email address exists.');
-//           // return res.redirect('/forgot');
-//         } else {
-//         user.resetPasswordToken = token;
-//         user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-//         console.log('===============', user.resetPasswordToken);
-
-//         user.save((errUser) => {
-//           done(errUser, token, user);
-//         });
-//         }
-//       });
-//     },
-//     (token, user, done) => {
-//       const smtpTransport = nodemailer.createTransport({
-//         service: 'Gmail',
-//         auth: {
-//           user: 'mariage.barreto@gmail.com',
-//           pass: 'coldouche2',
-//         }
-//       });
-//       const mailOptions = {
-//         to: user.email,
-//         from: 'Kalify',
-//         subject: 'Node.js Password Reset',
-//         text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
-//           'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-//           'http://' + req.headers.host + '/reset/' + token + '\n\n' +
-//           'If you did not request this, please ignore this email and your password will remain unchanged.\n'
-//       };
-//       smtpTransport.sendMail(mailOptions, (err) => {
-//         console.log('mail sent');
-//         req.flash('success', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
-//         done(err, 'done');
-//       });
-//     },
-//   ], (err) => {
-//     if (err) return next(err);
-//     return res.redirect('/forgot');
-//   });
-// });
+router.put('/reset', async (req, res) => {
+  const token = getToken(req);
+  const { password } = req.body;
+  const decode = jwt.verify(token, jwtSecret);
+  const user = await models.User.findOne({ where: { id: decode.id } });
+  await user.update({
+    password,
+  });
+  res.sendStatus(201);
+});
 
 module.exports = router;
