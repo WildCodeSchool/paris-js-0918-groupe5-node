@@ -56,19 +56,23 @@ router.post('/signin', (req, res) => {
 
 router.post('/forgotPassword', (req, res) => {
   const { email } = req.body;
-  // crypto.randomBytes(20, (err, buf) => {
-  //           const token = buf.toString('hex');
-  // })
-  // .then(token => {
   models.User.findOne({
     where: {
       email,
     },
   })
-  .then((user, token) => {
+  .then((user) => {
     console.log('+++++++++++++++', user);
     if (user) {
       user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+      const tokenInfo = {
+        resetPasswordExpires: user.resetPasswordExpires,
+        email: user.email,
+      };
+      const token = jwt.sign(tokenInfo, jwtSecret);
+      res.header('Access-Control-Expose-Headers', 'x-access-token');
+      res.set('x-access-token', token);
+
       console.log('((((((((((((((((((((((((', user.dataValues.resetPasswordExpires)
       const smtpTransport = nodemailer.createTransport({
         service: 'Gmail',
@@ -84,7 +88,7 @@ router.post('/forgotPassword', (req, res) => {
         text: 'Bonjour,\n\n' +
           'Vous recevez cet e-mail suite à une demande de réinitialisation de votre mot de passe sur le site Kalify.\n\n' +
           'Merci de cliquer sur le lien ci-dessous afin de choisir un nouveau mot de passe:\n\n' +
-          // 'http://' + req.headers.host + '/reset/' + token + '\n\n' +
+          'http://' + req.headers.host + '/reset/' + token + '\n\n' +
           'Si vous n\'êtes pas à l\'origine de cette demande, nous vous invitons à ignorer ce mail et votre mot de passe restera inchangé.\n\n' +
           'Cordialement,\n\n' +
           'L\'équipe Kalify\n\n'
