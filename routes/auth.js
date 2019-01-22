@@ -5,6 +5,12 @@ const bcrypt = require('bcrypt');
 const jwtSecret = require('../helpers/jwtSecret');
 const models = require('../models');
 
+const passport = require('passport');
+const User = require('../models/').User;
+const async = require('async');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+
 const router = express.Router();
 
 router.post('/signup', (req, res) => { // Caregiver creation
@@ -47,5 +53,106 @@ router.post('/signin', (req, res) => {
   })
   .catch(() => res.sendStatus(404));
 });
+
+router.post('/forgotPassword', (req, res) => {
+  const { email } = req.body;
+  // crypto.randomBytes(20, (err, buf) => {
+  //           const token = buf.toString('hex');
+  // })
+  // .then(token => {
+  models.User.findOne({
+    where: {
+      email,
+    },
+  })
+  .then((user, token) => {
+    console.log('+++++++++++++++', user);
+    if (user) {
+      user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+      console.log('((((((((((((((((((((((((', user.dataValues.resetPasswordExpires)
+      const smtpTransport = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+          user: 'widaad.barreto@gmail.com',
+          pass: 'ojsehiltpsfuuoxj',
+        },
+      });
+      const mailOptions = {
+        to: user.dataValues.email,
+        from: 'Kalify',
+        subject: 'Réinitialisation de votre mot de passe Kalify',
+        text: 'Bonjour,\n\n' +
+          'Vous recevez cet e-mail suite à une demande de réinitialisation de votre mot de passe sur le site Kalify.\n\n' +
+          'Merci de cliquer sur le lien ci-dessous afin de choisir un nouveau mot de passe:\n\n' +
+          // 'http://' + req.headers.host + '/reset/' + token + '\n\n' +
+          'Si vous n\'êtes pas à l\'origine de cette demande, nous vous invitons à ignorer ce mail et votre mot de passe restera inchangé.\n\n' +
+          'Cordialement,\n\n' +
+          'L\'équipe Kalify\n\n'
+      };
+      smtpTransport.sendMail(mailOptions, (err) => {
+        if (err) { throw (err); }
+        console.log('mail sent');
+        req.flash('success', 'An e-mail has been sent to ' + user.dataValues.email + ' with further instructions.');
+        // done(err, 'done');
+      });
+    }
+  });
+});
+// })
+// });
+
+
+// router.post('/forgotPassword', (req, res, next) => {
+//   async.waterfall([
+//     (done) => {
+//       crypto.randomBytes(20, (err, buf) => {
+//         const token = buf.toString('hex');
+//         done(err, token);
+//       });
+//     },
+//     (token, done) => {
+//       models.User.findOne({ where: { email: req.body.email } }, (err, user) => {
+//         if (!user) {
+//           req.flash('error', 'No account with that email address exists.');
+//           // return res.redirect('/forgot');
+//         } else {
+//         user.resetPasswordToken = token;
+//         user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+//         console.log('===============', user.resetPasswordToken);
+
+//         user.save((errUser) => {
+//           done(errUser, token, user);
+//         });
+//         }
+//       });
+//     },
+//     (token, user, done) => {
+//       const smtpTransport = nodemailer.createTransport({
+//         service: 'Gmail',
+//         auth: {
+//           user: 'mariage.barreto@gmail.com',
+//           pass: 'coldouche2',
+//         }
+//       });
+//       const mailOptions = {
+//         to: user.email,
+//         from: 'Kalify',
+//         subject: 'Node.js Password Reset',
+//         text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+//           'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+//           'http://' + req.headers.host + '/reset/' + token + '\n\n' +
+//           'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+//       };
+//       smtpTransport.sendMail(mailOptions, (err) => {
+//         console.log('mail sent');
+//         req.flash('success', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
+//         done(err, 'done');
+//       });
+//     },
+//   ], (err) => {
+//     if (err) return next(err);
+//     return res.redirect('/forgot');
+//   });
+// });
 
 module.exports = router;

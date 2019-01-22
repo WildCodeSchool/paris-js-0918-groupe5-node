@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "async": "^2.6.1",
     "axios": "^0.18.0",
     "bcrypt": "^3.0.3",
     "body-parser": "^1.18.3",
@@ -21,6 +22,8 @@
     "morgan": "^1.9.1",
     "mysql": "^2.16.0",
     "mysql2": "^1.6.4",
+    "nodemailer": "^5.1.1",
+    "passport": "^0.4.0",
     "pg": "^7.7.1",
     "sequelize": "^4.42.0",
     "sqlite": "^3.0.0"
