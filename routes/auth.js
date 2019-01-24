@@ -8,13 +8,16 @@ const nodemailer = require('nodemailer');
 const getToken = require('../helpers/getToken');
 const jwtSecret = require('../helpers/jwtSecret');
 const models = require('../models');
+const properNoun = require('../helpers/properNoun');
 
 const passwordMail = process.env.PASSWORD_MAIL;
 
 const router = express.Router();
 
 router.post('/signup', (req, res) => { // Caregiver creation
-  models.User.create(req.body)
+  const newUser = { ...req.body, firstName: properNoun(req.body.firstName), lastName: properNoun(req.body.lastName) }
+  console.log('=================NEW USER===================', newUser);
+  models.User.create(newUser)
     .then((user) => {
       res.status(200).json(user);
     })

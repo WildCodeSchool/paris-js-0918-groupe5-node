@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     address: { type: DataTypes.STRING, allowNull: false },
     phone: DataTypes.STRING,
     email: DataTypes.STRING,
-    preferenceOfContact: { type: DataTypes.STRING, allowNull: false },
+    preferenceOfContact: { type: DataTypes.STRING, allowNull: false, defaultValue: 'SMS' },
     category: { type: DataTypes.STRING, allowNull: false },
     comment: DataTypes.STRING,
     status: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
