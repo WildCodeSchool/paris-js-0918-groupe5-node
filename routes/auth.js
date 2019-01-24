@@ -8,24 +8,28 @@ const nodemailer = require('nodemailer');
 const getToken = require('../helpers/getToken');
 const jwtSecret = require('../helpers/jwtSecret');
 const models = require('../models');
+const properNoun = require('../helpers/properNoun');
 
 const passwordMail = process.env.PASSWORD_MAIL;
 
 const router = express.Router();
 
 router.post('/signup', (req, res) => { // Caregiver creation
-  models.User.create(req.body)
+  const newUser = { ...req.body, firstName: properNoun(req.body.firstName), lastName: properNoun(req.body.lastName) }
+  console.log('=================NEW USER===================', newUser);
+  models.User.create(newUser)
     .then((user) => {
       res.status(200).json(user);
     })
-    .catch(() => {
-      res.sendStatus(500);
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
     });
 });
 
 router.post('/signin', (req, res) => {
   const { email, password } = req.body;
-  console.log('(((((((((((((((((((', passwordMail)
+  console.log('(((((((((((((((((((', password, email);
   // find in the db an user which have the same email than the one entered by the user
   models.User.findOne({
     where: {
@@ -33,7 +37,6 @@ router.post('/signin', (req, res) => {
     },
   })
   .then((user) => {
-    console.log(password, ' compare to ', user.password);
     bcrypt.compare(password, user.password, (err, match) => {
       if (match) {
         const tokenInfo = {
