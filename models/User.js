@@ -13,6 +13,8 @@ module.exports = (sequelize, DataTypes) => {
     receiverBond: DataTypes.STRING, // allowNull: false for caregiver
     email: { type: DataTypes.STRING, unique: true }, // allowNull: false for caregiver
     password: { type: DataTypes.STRING, defaultValue: null }, // allowNull: false for caregiver
+    resetPasswordToken: DataTypes.STRING,
+    resetPasswordExpires: DataTypes.DATE,
     preferenceOfContact: DataTypes.INTEGER, // allowNull: false for caregiver
     numberOfSubscriptions: DataTypes.INTEGER, // allowNull: false for caregiver
     selectedReceiverId: { type: DataTypes.INTEGER, defaultValue: -1 },

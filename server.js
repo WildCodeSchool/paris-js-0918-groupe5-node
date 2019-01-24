@@ -14,14 +14,18 @@ const routerEvents = require('./routes/event');
 
 const verifyToken = (req, res, next) => {
   const token = getToken(req);
+  console.log(token);
   jwt.verify(token, jwtSecret, (err, decode) => {
     if (err) {
-      res.sendStatus(401);
+      return res.sendStatus(401);
     } else {
-      // decode.id
+      console.log('verifyToken id------------------------', decode.id);
       models.User.findByPk(decode.id)
         .then((caregiver) => {
-          if (!caregiver) res.sendStatus(401);
+          if (!caregiver) {
+            console.log('verifyToken no caregiver------------------------');
+            res.sendStatus(401);
+          }
           // we keep the caregiver in the req so we can access it in the following requests
           req.caregiver = caregiver;
           next();

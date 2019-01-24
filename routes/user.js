@@ -1,5 +1,6 @@
 const express = require('express');
 const models = require('../models');
+const properNoun = require('../helpers/properNoun');
 
 const router = express.Router();
 
@@ -14,10 +15,11 @@ router.route('/receivers')
   })
   // create a new receiver and link it with the connected caregiver
   .post((req, res) => {
-    const newReceiver = req.body;
+    const newReceiver = { ...req.body, firstName: properNoun(req.body.firstName), lastName: properNoun(req.body.lastName) };
+    console.log('=================NEW RECEIVER===================', newReceiver);
     newReceiver.avatar = newReceiver.title === 'M.'
       ? 'http://localhost:4244/public/avatars/avatar_old_man.png'
-      : 'http://localhost:4244/public/avatars//avatar_old_woman.png';
+      : 'http://localhost:4244/public/avatars/avatar_old_woman.png';
     models.User.create(newReceiver)
       .then((receiver) => {
         const receiverId = receiver.id;
@@ -42,11 +44,11 @@ router.route('/receiver/:idReceiver')
   // update the selected receiver
   .put((req, res) => {
     const { idReceiver } = req.params;
-    const updatedReceiver = req.body;
+    const updatedReceiver = { ...req.body, firstName: properNoun(req.body.firstName), lastName: properNoun(req.body.lastName) };
     models.User.findByPk(idReceiver).then((receiver) => {
       updatedReceiver.avatar = updatedReceiver.title === 'M.'
       ? 'http://localhost:4244/public/avatars/avatar_old_man.png'
-      : 'http://localhost:4244/public/avatars//avatar_old_woman.png';
+      : 'http://localhost:4244/public/avatars/avatar_old_woman.png';
       receiver.update({
         ...updatedReceiver,
       }).then(() => {
@@ -60,8 +62,6 @@ router.route('/receiver/:idReceiver')
     models.User.findByPk(idReceiver).then((receiver) => {
       receiver.getEvents({ where: { status: true } })
         .then((events) => {
-          // est-ce qu'on fais passer le statut des événement à faux ou bien est-ce qu'on casse les liens ac la table d'association
-          // est-ce qu'on supprime les contacts ou bien on les garde en mémoire pour le caregiver ?
           events.forEach((eventEl) => {
             eventEl.update({
               status: false,
@@ -71,7 +71,7 @@ router.route('/receiver/:idReceiver')
           receiver.update({
             status: false,
           }).then(() => {
-            req.caregiver.getReceiver((receivers) => {
+            req.caregiver.getReceiver({ where: { status: true } }).then((receivers) => {
               req.caregiver.update({
                 selectedReceiverId: receivers.length > 0 ? receivers[0].id : -1,
               });
@@ -94,7 +94,11 @@ router.route('/selectReceiver/:idReceiver')
           .then((events) => {
             receiver.getContacts({ where: { status: true } })
               .then((contacts) => {
-                res.status(200).json({ receiver, events, contacts });
+                res.status(200).json({
+                  receiver,
+                  events,
+                  contacts,
+                });
               });
           });
         // res.status(200).json(receiver);
@@ -105,13 +109,22 @@ router.route('/selectReceiver/:idReceiver')
 router.route('/caregiver')
   // update the connected caregiver
   .put((req, res) => {
-    const updatedCaregiver = req.body;
-      req.caregiver.update({
-        ...updatedCaregiver,
-      }).then(() => {
+    const reqArray = Object.entries(req.body)[0]
+    const fieldToModify = reqArray[0]
+    const value = reqArray[1]
+
+    if (fieldToModify === 'lastName' || fieldToModify === 'firstName'){
+      const updatedCaregiver = properNoun(value);
+      req.caregiver.update({ [fieldToModify]: updatedCaregiver}).then(() => {
         res.status(200).json(req.caregiver);
       });
+    } else {
+      req.caregiver.update({ [fieldToModify]: value}).then(() => {
+        res.status(200).json(req.caregiver);
+      });
+    }
   })
+
   // delete the connected caregiver (change his status to false)
   .delete((req, res) => {
       req.caregiver.update({
