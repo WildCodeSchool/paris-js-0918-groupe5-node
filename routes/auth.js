@@ -21,8 +21,9 @@ router.post('/signup', (req, res) => { // Caregiver creation
     .then((user) => {
       res.status(200).json(user);
     })
-    .catch(() => {
-      res.sendStatus(500);
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
     });
 });
 
@@ -36,7 +37,6 @@ router.post('/signin', (req, res) => {
     },
   })
   .then((user) => {
-    console.log(password, ' compare to ', user.password);
     bcrypt.compare(password, user.password, (err, match) => {
       if (match) {
         const tokenInfo = {
