@@ -60,8 +60,6 @@ router.route('/receiver/:idReceiver')
     models.User.findByPk(idReceiver).then((receiver) => {
       receiver.getEvents({ where: { status: true } })
         .then((events) => {
-          // est-ce qu'on fais passer le statut des événement à faux ou bien est-ce qu'on casse les liens ac la table d'association
-          // est-ce qu'on supprime les contacts ou bien on les garde en mémoire pour le caregiver ?
           events.forEach((eventEl) => {
             eventEl.update({
               status: false,
@@ -71,7 +69,7 @@ router.route('/receiver/:idReceiver')
           receiver.update({
             status: false,
           }).then(() => {
-            req.caregiver.getReceiver((receivers) => {
+            req.caregiver.getReceiver({ where: { status: true } }).then((receivers) => {
               req.caregiver.update({
                 selectedReceiverId: receivers.length > 0 ? receivers[0].id : -1,
               });
