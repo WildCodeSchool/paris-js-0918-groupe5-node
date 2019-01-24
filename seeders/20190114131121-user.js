@@ -12,7 +12,7 @@ module.exports = {
       phone: '0666666666',
       dateOfBirth: null,
       receiverBond: null,
-      email: 'widaad.barreto@gmail.com',
+      email: 'karine.jolivet@gmail.com',
       password: 'karine',
       preferenceOfContact: 'EMAIL',
       resetPasswordExpires: 1,
