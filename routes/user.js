@@ -18,8 +18,8 @@ router.route('/receivers')
     const newReceiver = { ...req.body, firstName: properNoun(req.body.firstName), lastName: properNoun(req.body.lastName) };
     console.log('=================NEW RECEIVER===================', newReceiver);
     newReceiver.avatar = newReceiver.title === 'M.'
-      ? 'http://localhost:4245/public/avatars/avatar_old_man.png'
-      : 'http://localhost:4245/public/avatars/avatar_old_woman.png';
+      ? 'http://localhost:4244/public/avatars/avatar_old_man.png'
+      : 'http://localhost:4244/public/avatars/avatar_old_woman.png';
     models.User.create(newReceiver)
       .then((receiver) => {
         const receiverId = receiver.id;
@@ -47,8 +47,8 @@ router.route('/receiver/:idReceiver')
     const updatedReceiver = { ...req.body, firstName: properNoun(req.body.firstName), lastName: properNoun(req.body.lastName) };
     models.User.findByPk(idReceiver).then((receiver) => {
       updatedReceiver.avatar = updatedReceiver.title === 'M.'
-      ? 'http://localhost:4245/public/avatars/avatar_old_man.png'
-      : 'http://localhost:4245/public/avatars/avatar_old_woman.png';
+      ? 'http://localhost:4244/public/avatars/avatar_old_man.png'
+      : 'http://localhost:4244/public/avatars/avatar_old_woman.png';
       receiver.update({
         ...updatedReceiver,
       }).then(() => {
