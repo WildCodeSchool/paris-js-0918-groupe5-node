@@ -1,16 +1,15 @@
+require('dotenv').config();
+
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const getToken = require('../helpers/getToken');
+const nodemailer = require('nodemailer');
 
+const getToken = require('../helpers/getToken');
 const jwtSecret = require('../helpers/jwtSecret');
 const models = require('../models');
 
-const passport = require('passport');
-const User = require('../models/').User;
-const async = require('async');
-const nodemailer = require('nodemailer');
-const crypto = require('crypto');
+const passwordMail = process.env.PASSWORD_MAIL;
 
 const router = express.Router();
 
@@ -26,6 +25,7 @@ router.post('/signup', (req, res) => { // Caregiver creation
 
 router.post('/signin', (req, res) => {
   const { email, password } = req.body;
+  console.log('(((((((((((((((((((', passwordMail)
   // find in the db an user which have the same email than the one entered by the user
   models.User.findOne({
     where: {
@@ -76,7 +76,7 @@ router.post('/forgotPassword', (req, res) => {
         service: 'Gmail',
         auth: {
           user: 'widaad.barreto@gmail.com',
-          pass: 'ojsehiltpsfuuoxj',
+          pass: passwordMail,
         },
       });
       const mailOptions = {
@@ -92,7 +92,7 @@ router.post('/forgotPassword', (req, res) => {
           L'équipe Kalify\n`,
       };
       smtpTransport.sendMail(mailOptions, (err) => {
-        if (err) { throw (err); }
+        if (err) { console.log(err); }
         console.log('mail sent');
       });
       res.sendStatus(200);
