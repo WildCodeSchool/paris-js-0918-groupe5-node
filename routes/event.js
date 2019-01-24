@@ -13,7 +13,25 @@ class EventEveryDays {
     this.daysSelected = allInfo.daysSelected;
     this.contact = allInfo.contact;
     this.category = allInfo.category;
-    this.events = allInfo.events;
+    // this.events = allInfo.events;
+    this.visibleEvent = allInfo.visibleEvent;
+    this.followedVisit = allInfo.followedVisit;
+    this.reminder = allInfo.reminder;
+    this.immediateNotif = allInfo.immediateNotif;
+  }
+}
+
+class EventOneDays {
+  constructor(allInfo) {
+    this.title = allInfo.title;
+    this.OtherAddressChecked = allInfo.OtherAddressChecked;
+    this.address = allInfo.address;
+    this.startingDate = moment(allInfo.startingDate).toString();
+    this.endingDate = moment(allInfo.startingDate).toString();
+    this.frequency = allInfo.frequency;
+    this.contact = allInfo.contact;
+    this.category = allInfo.category;
+    // this.events = allInfo.events;
     this.visibleEvent = allInfo.visibleEvent;
     this.followedVisit = allInfo.followedVisit;
     this.reminder = allInfo.reminder;
@@ -31,7 +49,7 @@ router.route('/:idContact')
     // creation of a new event in the Event table
     console.log('body', req.body);
     if (newEvent.frequency === '' || newEvent.frequency === 'once') {
-      models.Event.create(newEvent)
+      models.Event.create(new EventOneDays(newEvent))
       .then((eventCreated) => {
         models.User.findByPk(selectedReceiverId)
           .then((receiver) => {
