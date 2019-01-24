@@ -15,6 +15,7 @@ module.exports = {
       email: 'karine.jolivet@gmail.com',
       password: 'karine',
       preferenceOfContact: 'EMAIL',
+      resetPasswordExpires: 1,
       numberOfSubscriptions: 1,
       selectedReceiverId: 2,
       subscriber: true,

@@ -1,5 +1,6 @@
 const express = require('express');
 const models = require('../models');
+const properNoun = require('../helpers/properNoun');
 
 const router = express.Router();
 
@@ -14,10 +15,11 @@ router.route('/receivers')
   })
   // create a new receiver and link it with the connected caregiver
   .post((req, res) => {
-    const newReceiver = req.body;
+    const newReceiver = { ...req.body, firstName: properNoun(req.body.firstName), lastName: properNoun(req.body.lastName) };
+    console.log('=================NEW RECEIVER===================', newReceiver);
     newReceiver.avatar = newReceiver.title === 'M.'
       ? 'http://localhost:4244/public/avatars/avatar_old_man.png'
-      : 'http://localhost:4244/public/avatars//avatar_old_woman.png';
+      : 'http://localhost:4244/public/avatars/avatar_old_woman.png';
     models.User.create(newReceiver)
       .then((receiver) => {
         const receiverId = receiver.id;
@@ -42,11 +44,11 @@ router.route('/receiver/:idReceiver')
   // update the selected receiver
   .put((req, res) => {
     const { idReceiver } = req.params;
-    const updatedReceiver = req.body;
+    const updatedReceiver = { ...req.body, firstName: properNoun(req.body.firstName), lastName: properNoun(req.body.lastName) };
     models.User.findByPk(idReceiver).then((receiver) => {
       updatedReceiver.avatar = updatedReceiver.title === 'M.'
       ? 'http://localhost:4244/public/avatars/avatar_old_man.png'
-      : 'http://localhost:4244/public/avatars//avatar_old_woman.png';
+      : 'http://localhost:4244/public/avatars/avatar_old_woman.png';
       receiver.update({
         ...updatedReceiver,
       }).then(() => {
@@ -107,7 +109,7 @@ router.route('/selectReceiver/:idReceiver')
 router.route('/caregiver')
   // update the connected caregiver
   .put((req, res) => {
-    const updatedCaregiver = req.body;
+    const updatedCaregiver = { ...req.body, firstName: properNoun(req.body.firstName), lastName: properNoun(req.body.lastName) };
       req.caregiver.update({
         ...updatedCaregiver,
       }).then(() => {
