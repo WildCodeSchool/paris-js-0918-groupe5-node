@@ -109,13 +109,22 @@ router.route('/selectReceiver/:idReceiver')
 router.route('/caregiver')
   // update the connected caregiver
   .put((req, res) => {
-    const updatedCaregiver = { ...req.body, firstName: properNoun(req.body.firstName), lastName: properNoun(req.body.lastName) };
-      req.caregiver.update({
-        ...updatedCaregiver,
-      }).then(() => {
+    const reqArray = Object.entries(req.body)[0]
+    const fieldToModify = reqArray[0]
+    const value = reqArray[1]
+
+    if (fieldToModify === 'lastName' || fieldToModify === 'firstName'){
+      const updatedCaregiver = properNoun(value);
+      req.caregiver.update({ [fieldToModify]: updatedCaregiver}).then(() => {
         res.status(200).json(req.caregiver);
       });
+    } else {
+      req.caregiver.update({ [fieldToModify]: value}).then(() => {
+        res.status(200).json(req.caregiver);
+      });
+    }
   })
+
   // delete the connected caregiver (change his status to false)
   .delete((req, res) => {
       req.caregiver.update({

@@ -113,18 +113,20 @@ router.route('/')
   // get the active events linked to the selected receiver
   .get((req, res) => {
     const { selectedReceiverId } = req.caregiver;
-    if (selectedReceiverId !== -1) {
-      models.User.findByPk(selectedReceiverId)
-        .then((receiver) => {
-          // console.log(receiver.prototype);
+    //return res.json(req.caregiver);
+
+    models.User.findByPk(selectedReceiverId)
+      .then((receiver) => {
+        // console.log(receiver.prototype);
+        if(receiver){
           receiver.getEvents({ where: { status: true } })
-            .then((events) => {
-              res.status(200).json(events);
-            });
-        });
-    } else {
-      res.status(200).json([]);
-    }
+          .then((events) => {
+            res.status(200).json(events);
+          });
+        } else {
+          res.status(404).json({error:"no user"});
+        }
+      });
   });
 
 module.exports = router;

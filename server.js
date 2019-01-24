@@ -14,9 +14,10 @@ const routerEvents = require('./routes/event');
 
 const verifyToken = (req, res, next) => {
   const token = getToken(req);
+  console.log(token);
   jwt.verify(token, jwtSecret, (err, decode) => {
     if (err) {
-      res.sendStatus(401);
+      return res.sendStatus(401);
     } else {
       console.log('verifyToken id------------------------', decode.id);
       models.User.findByPk(decode.id)
