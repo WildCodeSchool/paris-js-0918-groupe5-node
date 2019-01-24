@@ -4,11 +4,14 @@ const bcrypt = require('bcrypt');
 
 const jwtSecret = require('../helpers/jwtSecret');
 const models = require('../models');
+const properNoun = require('../helpers/properNoun');
 
 const router = express.Router();
 
 router.post('/signup', (req, res) => { // Caregiver creation
-  models.User.create(req.body)
+  const newUser = { ...req.body, firstName: properNoun(req.body.firstName), lastName: properNoun(req.body.lastName) }
+  console.log('=================NEW USER===================', newUser);
+  models.User.create(newUser)
     .then((user) => {
       res.status(200).json(user);
     })
