@@ -25,7 +25,7 @@ router.post('/signup', (req, res) => { // Caregiver creation
 
 router.post('/signin', (req, res) => {
   const { email, password } = req.body;
-  console.log('(((((((((((((((((((', passwordMail)
+  console.log('(((((((((((((((((((', password, email);
   // find in the db an user which have the same email than the one entered by the user
   models.User.findOne({
     where: {
