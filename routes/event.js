@@ -30,7 +30,7 @@ router.route('/:idContact')
     const { idContact } = req.params;
     const { selectedReceiverId } = req.caregiver;
     // creation of a new event in the Event table
-    console.log('duration');
+    console.log('body', req.body);
     if (newEvent.frequency === '' || newEvent.frequency === 'once') {
       models.Event.create(newEvent)
       .then((eventCreated) => {
