@@ -14,9 +14,13 @@ const passwordMail = process.env.PASSWORD_MAIL;
 
 const router = express.Router();
 
-router.post('/signup', (req, res) => { // Caregiver creation
-  const newUser = { ...req.body, firstName: properNoun(req.body.firstName), lastName: properNoun(req.body.lastName) }
-  console.log('=================NEW USER===================', newUser);
+router.post('/signup', (req, res) => { // caregiver creation
+  const newUser = { // we set the first letter of firstName and lastName into uppercases
+    ...req.body,
+    firstName: properNoun(req.body.firstName),
+    lastName: properNoun(req.body.lastName),
+  };
+
   models.User.create(newUser)
     .then((user) => {
       res.status(200).json(user);
@@ -27,9 +31,8 @@ router.post('/signup', (req, res) => { // Caregiver creation
     });
 });
 
-router.post('/signin', (req, res) => {
+router.post('/signin', (req, res) => { // caregiver connection
   const { email, password } = req.body;
-  console.log('(((((((((((((((((((', password, email);
   // find in the db an user which have the same email than the one entered by the user
   models.User.findOne({
     where: {
@@ -37,7 +40,7 @@ router.post('/signin', (req, res) => {
     },
   })
   .then((user) => {
-    bcrypt.compare(password, user.password, (err, match) => {
+    bcrypt.compare(password, user.password, (err, match) => { // bcrypt is going to compare the password in database with the one written by the user
       if (match) {
         const tokenInfo = {
           email,
@@ -46,7 +49,7 @@ router.post('/signin', (req, res) => {
         // creation of the token with the tokenInfo
         // we use the jwtSecret to create it (and decrypt it later)
         const token = jwt.sign(tokenInfo, jwtSecret, { expiresIn: '1d' });
-        // creation of an header 'Access-Control...' with the name 'x-access-token'
+        // creation of a header 'Access-Control...' with the name 'x-access-token'
         res.header('Access-Control-Expose-Headers', 'x-access-token');
         // we set the value of the header with the token
         res.set('x-access-token', token);
@@ -59,9 +62,9 @@ router.post('/signin', (req, res) => {
   .catch(() => res.sendStatus(404));
 });
 
-router.post('/forgotPassword', (req, res) => {
+router.post('/forgotPassword', (req, res) => { // to reset password of a caregiver
   const { email } = req.body;
-  models.User.findOne({
+  models.User.findOne({ // we get the caregiver whose email is the one in req.body
     where: {
       email,
     },
@@ -71,21 +74,24 @@ router.post('/forgotPassword', (req, res) => {
       // user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
       const tokenInfo = {
         id: user.id,
-        expiresIn: '6h',
+        expiresIn: '6h', // jwt expires the token in 6h if not used
       };
-      const token = jwt.sign(tokenInfo, jwtSecret);
+
+      const token = jwt.sign(tokenInfo, jwtSecret); // we create a new token
       res.header('Access-Control-Expose-Headers', 'x-access-token');
       res.set('x-access-token', token);
-      const smtpTransport = nodemailer.createTransport({
+
+      const smtpTransport = nodemailer.createTransport({ // we are setting the id and password for the expeditor mail
         service: 'Gmail',
         auth: {
           user: 'widaad.barreto@gmail.com',
           pass: passwordMail,
         },
       });
-      const mailOptions = {
+
+      const mailOptions = { // mail that will be sent
         to: user.dataValues.email,
-        from: 'Kalify <widaad.barreto@gmail.com>',
+        from: `Kalify <${smtpTransport.options.auth.user}>`,
         subject: 'Réinitialisation de votre mot de passe Kalify',
         text: `Bonjour,\n
           Vous recevez cet e-mail suite à une demande de réinitialisation de votre mot de passe sur le site Kalify.\n
@@ -95,36 +101,23 @@ router.post('/forgotPassword', (req, res) => {
           Cordialement,\n
           L'équipe Kalify\n`,
       };
-      smtpTransport.sendMail(mailOptions, (err) => {
+
+      smtpTransport.sendMail(mailOptions, (err) => { // sending the mail
         if (err) { console.log(err); }
         console.log('mail sent');
       });
       res.sendStatus(200);
     } else {
-      res.sendStatus(404);
+      res.status(404).json({ error: 'user not found in database' });
     }
   });
 });
 
-// router.put('/reset', (req, res) => {
-//   const token = getToken(req);
-//   const { password } = req.body;
-//   const decode = jwt.verify(token, jwtSecret);
-//   models.User.findOne({ where: { id: decode.id } })
-//     .then((user) => {
-//       user.update({
-//         password,
-//       }).then(() => {
-//         res.sendStatus(201);
-//       });
-//     });
-// });
-
-router.put('/reset', async (req, res) => {
+router.put('/reset', async (req, res) => { // route to set a new password
   const token = getToken(req);
   const { password } = req.body;
   const decode = jwt.verify(token, jwtSecret);
-  const user = await models.User.findOne({ where: { id: decode.id } });
+  const user = await models.User.findOne({ where: { id: decode.id } }); // we get the caregiver identified with the id in the token
   await user.update({
     password,
   });
