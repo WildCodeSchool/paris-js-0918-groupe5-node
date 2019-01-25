@@ -4,13 +4,55 @@ const properNoun = require('../helpers/properNoun');
 
 const router = express.Router();
 
+router.route('/')
+
+  .get((req, res) => { // get the active contacts of the selected receiver
+    const { selectedReceiverId } = req.caregiver;
+    models.User.findByPk(selectedReceiverId)
+      .then((receiver) => {
+        receiver.getContacts({
+          where: {
+            status: true,
+          },
+        })
+          .then((contacts) => {
+            res.status(200).json(contacts);
+          });
+      });
+  })
+
+  .post((req, res) => { // create a new contact linked to the selected receiver
+    const newContact = { // we set the first letter of firstName and lastName into uppercases
+      ...req.body,
+      firstName: properNoun(req.body.firstName),
+      lastName: properNoun(req.body.lastName),
+    };
+
+    const { selectedReceiverId } = req.caregiver; // we get the id of the caregiver connected
+    models.Contact.create(newContact) // we create a new contact
+    .then((contact) => {
+      models.User.findByPk(selectedReceiverId) // we get the receiver with the caregiver table
+      .then((receiver) => {
+        receiver.addContact(contact) // we link the contact's receiver to the caregiver connectd
+          .then(() => {
+            res.status(200).json(contact);
+          });
+      });
+    });
+  });
+
 router.route('/:idContact')
-  // update a contact
-  .put((req, res) => {
+  .put((req, res) => { // update a contact
     const { idContact } = req.params;
-    const updatedContact = { ...req.body, firstName: properNoun(req.body.firstName), lastName: properNoun(req.body.lastName) };
-    // console.log('updatedContact : ', updatedContact);
-    models.Contact.findByPk(idContact).then((contact) => {
+
+    const updatedContact = { // we set the first letter of firstName and lastName into uppercases
+      ...req.body,
+      firstName: properNoun(req.body.firstName),
+      lastName: properNoun(req.body.lastName),
+    };
+
+    models.Contact.findByPk(idContact)
+    .then((contact) => {
       contact.update({
         ...updatedContact,
       }).then(() => {
@@ -18,10 +60,11 @@ router.route('/:idContact')
       });
     });
   })
-  // delete a contact (change his status to false)
-  .delete((req, res) => {
+
+  .delete((req, res) => { // delete a contact (change his status to false)
     const { idContact } = req.params;
-    models.Contact.findByPk(idContact).then((contact) => {
+    models.Contact.findByPk(idContact)
+    .then((contact) => {
       contact.update({
         status: false,
       }).then(() => {
@@ -29,78 +72,5 @@ router.route('/:idContact')
       });
     });
   });
-
-router.route('/')
-  // create a new contact linked to the selected receiver
-  .post((req, res) => {
-    const newContact = { ...req.body, firstName: properNoun(req.body.firstName), lastName: properNoun(req.body.lastName) };
-
-    const { selectedReceiverId } = req.caregiver;
-    // console.log(models.Contact.prototype);
-    models.Contact.create(newContact)
-    .then((contact) => {
-      models.User.findByPk(selectedReceiverId).then((receiver) => {
-        receiver.addContact(contact)
-          .then(() => {
-            res.status(200).json(contact);
-          });
-      });
-    });
-  })
-  // get the active contacts of the selected receiver
-  .get((req, res) => {
-    const { selectedReceiverId } = req.caregiver;
-    models.User.findByPk(selectedReceiverId)
-      .then((receiver) => {
-        receiver.getContacts({ where: { status: true } })
-          .then((contacts) => {
-            res.status(200).json(contacts);
-          });
-      });
-  });
-
-// router.get('/:x', (req,res) => {
-// models.users.findAll({
-// where : {
-// firstname : req.params.x
-// }
-// }).then(data  => {
-// res.status(200).json(data)
-// })
-// })
-
-// router.post('/', (req, res) => {
-//   const data = req.body;
-//   console.log("Ajout d'un contact");
-//   const newContact = new models.Contact(data);
-//   newContact.save()
-//     .then((contact) => {
-//       // when we received a newContact, we send back a JSON to the client
-//       res.status(200).json(contact);
-//     })
-//     .catch((err) => {
-//       console.log(err.message);
-//     });
-// });
-
-// router.put('/:id(\\d+)', (req,res) => {
-// models.users.findById(req.params.id)
-// .then(userFound => {
-// if(userFound){
-// const data = req.body;
-// models.users.update(
-// data,
-// { where : { id : req.params.id } }
-// )
-// .then(
-// updatedUser => {
-// res.status(200).send(`user update at id ${req.params.id}`)
-// })
-// }
-// else {
-// return res.status(404).send("User no exist")
-// }
-// })
-// })
 
 module.exports = router;
