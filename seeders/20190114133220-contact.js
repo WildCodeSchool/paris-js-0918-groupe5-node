@@ -83,7 +83,7 @@ module.exports = {
         firstName: 'Jean',
         profession: null,
         address: '100 rue de Nice 75006 Paris',
-        phone: '0699999999',
+        phone: '06 98 12 82 99',
         email: 'jean.f@gmail.com',
         preferenceOfContact: 'SMS',
         category: 'Proches',
