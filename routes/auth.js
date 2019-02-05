@@ -84,7 +84,7 @@ router.post('/forgotPassword', (req, res) => { // to reset password of a caregiv
       const smtpTransport = nodemailer.createTransport({ // we are setting the id and password for the expeditor mail
         service: 'Gmail',
         auth: {
-          user: 'widaad.barreto@gmail.com',
+          user: '', // put here karine's mail
           pass: passwordMail,
         },
       });
